@@ -3,7 +3,9 @@ const jwt = require('jsonwebtoken');
 require('dotenv').config();
 
 const UserController = require('./app/controllers/UserController');
-const BoardController = require('./app/controllers/BoardController');
+const BoardController = require('./app/controllers/BoardController.js');
+const ColumnController = require('./app/controllers/ColumnController');
+const TaskController = require('./app/controllers/TaskController');
 
 const router = Router();
 
@@ -25,7 +27,18 @@ router.use((request, response, next) => {
   }
 });
 
-router.post('/board/:userId', BoardController.createBoardWithColumns)
-router.put('/board/:boardId', BoardController.updateBoardWithColumns)
+router.get('/board/:userId', BoardController.index);
+router.post('/board/:userId', BoardController.store);
+router.put('/board/:boardId', BoardController.update);
+router.delete('/board/:boardId', BoardController.delete);
+
+router.get('/column/:boardId', ColumnController.index);
+router.post('/column/:boardId', ColumnController.store);
+//router.put('/column/:columnId', ColumnController.update);
+
+router.get('/task/:columnId', TaskController.index);
+router.post('/task/:columnId', TaskController.store);
+router.put('/task/:taskId', TaskController.update);
+router.delete('/task/:taskId', TaskController.delete);
 
 module.exports = router;

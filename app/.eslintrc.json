@@ -12,6 +12,8 @@
   "plugins": ["react"],
   "rules": {
     "quotes": ["error", "single"],
-    "react/react-in-jsx-scope": "off"
+    "react/react-in-jsx-scope": "off",
+    "import/no-extraneous-dependencies": "off",
+    "object-curly-newline": "off"
   }
 }

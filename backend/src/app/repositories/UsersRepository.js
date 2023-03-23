@@ -6,6 +6,11 @@ class UsersRepository {
     return row;
   }
 
+  async findUserById(id) {
+    const [row] = await db.query('SELECT * FROM users WHERE id = $1', [id]);
+    return row;
+  }
+
   async create({ username, password }) {
     const [row] = await db.query(`
       INSERT INTO users(username, password, created_at)

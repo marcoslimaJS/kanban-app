@@ -1,7 +1,17 @@
+const UsersRepository = require('../repositories/UsersRepository');
 const BoardsRepository = require('../repositories/BoardsRepository');
+const ColumnsRepository = require('../repositories/ColumnsRepository');
+const TasksRepository = require('../repositories/TasksRepository');
+const SubtasksRepository = require('../repositories/SubtasksRepository')
 
 class BoardController {
-  async createBoardWithColumns(request, response) {
+  async index(request, response) {
+    const { userId } = request.params;
+    const boards = await BoardsRepository.findAll(userId);
+    response.send(boards);
+  }
+
+  async store(request, response) {
     const { userId } = request.params;
     const { name, columns } = request.body;
     const userIdExists = await BoardsRepository.findUserById(userId);
@@ -21,7 +31,7 @@ class BoardController {
     }
 
     for (const [index, name] of columns.entries()) {
-      await BoardsRepository.createColumn({
+      await ColumnsRepository.createColumn({
         boardId: boardId.id,
         name,
         order: parseInt(index) + 1,
@@ -31,7 +41,7 @@ class BoardController {
     response.send({ msg: 'Board created successfully' });
   }
 
-  async updateBoardWithColumns(request, response) {
+  async update(request, response) {
     const { boardId } = request.params;
     const { name, columns } = request.body;
     const boardExists = await BoardsRepository.findBoardById(boardId);
@@ -44,7 +54,7 @@ class BoardController {
     }
     await BoardsRepository.updateBoard(boardId, { name });
 
-    const allColumnsOfBoard = await BoardsRepository.findAllColumnsByBoardId(
+    const allColumnsOfBoard = await ColumnsRepository.findAllColumnsByBoardId(
       boardId
     );
     const columnsId = columns.map(({ id }) => id);
@@ -52,19 +62,19 @@ class BoardController {
     // Remove a coluna caso ela exista no banco e não exista na requisição
     // pois isso quer dizer que o usuario removeu a coluna.
     for (const [i, { id }] of allColumnsOfBoard.entries()) {
-      !columnsId.includes(id) && (await BoardsRepository.deleteColumn(id));
+      !columnsId.includes(id) && (await ColumnsRepository.deleteColumn(id));
     }
 
     //Verifica se a coluna ja existe pelo id e atualiza, se não existir então cria.
     for (const [index, column] of columns.entries()) {
       if (column.id) {
-        const columnExists = await BoardsRepository.findColumnById(column.id);
+        const columnExists = await ColumnsRepository.findColumnById(column.id);
         columnExists &&
-          (await BoardsRepository.updateColumn(column.id, {
+          (await ColumnsRepository.updateColumn(column.id, {
             name: column.name,
           }));
       } else {
-        await BoardsRepository.createColumn({
+        await ColumnsRepository.createColumn({
           boardId,
           name: column.name,
           order: parseInt(index) + 1,
@@ -75,7 +85,38 @@ class BoardController {
     response.send({ msg: 'Board updated successfully' });
   }
 
-  
+  async delete(request, response) {
+    const { boardId } = request.params;
+    const { userId } = request.body;
+
+    const userExists = await UsersRepository.findUserById(userId);
+    const boardExists = await BoardsRepository.findBoardById(boardId);
+
+    if (!userExists) {
+      response.status(400).json({ error: 'User not found' });
+    }
+
+    if (!boardExists) {
+      response.status(404).json({ error: 'Board not found' });
+    }
+
+    const columnsOfBoard = await ColumnsRepository.findAllColumnsByBoardId(
+      boardId
+    );
+
+    for (const [i, { id: columnId }] of columnsOfBoard.entries()) {
+      const allTasksOfColumns = await TasksRepository.findAllTasksByColumnId(columnId);
+      for (const [i, { id: taskId }] of allTasksOfColumns.entries()) {
+        await SubtasksRepository.deleteSubtaskByTaskId(taskId);
+      }
+      await TasksRepository.deleteTaskByColumnId(columnId);
+    }
+
+    await ColumnsRepository.deleteColumnByBoardId(boardId);
+    await BoardsRepository.deleteBoard(boardId);
+
+    response.sendStatus(204);
+  }
 }
 
 module.exports = new BoardController();
