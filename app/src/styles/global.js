@@ -27,9 +27,8 @@ const GlobalStyle = createGlobalStyle`
   body {
     font-size: 16px;
     font-family: 'Plus Jakarta Sans', sans-serif;
-    overflow-x: hidden;
-    font-size: 12px;
     background: ${({ theme }) => theme.bgSecundary};
+    min-height: 100vh;
   }
 `;
 

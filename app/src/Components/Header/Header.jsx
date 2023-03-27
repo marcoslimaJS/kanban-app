@@ -37,6 +37,7 @@ const Logo = styled.div`
   //border-right: 1px solid ${({ theme }) => theme.lines};
   padding-right: 32px;
   position: relative;
+  width: 257px;
   &::after {
     content: '';
     display: inline-block;

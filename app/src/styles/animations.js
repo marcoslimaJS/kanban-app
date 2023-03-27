@@ -14,7 +14,7 @@ export const AnimeDown = keyframes`
 export const AnimeLeft = keyframes`
   from {
     opacity: 0;
-    transform: translate3d(-90px, 0px, 0px);
+    transform: translate3d(-40px, 0px, 0px);
   }
   to {
     opacity: 1;
