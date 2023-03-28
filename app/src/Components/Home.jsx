@@ -7,7 +7,7 @@ import Board from './Board';
 import Header from './Header/Header';
 import { ReactComponent as ShowSVG } from '../assets/icon-show-sidebar.svg';
 import { showSidebar } from '../store/sidebar';
-import { AnimeLeft, AnimeScale } from '../styles/animations';
+import { AnimeLeft } from '../styles/animations';
 
 function Home({ setTheme }) {
   const dispatch = useDispatch();
@@ -51,7 +51,7 @@ const Container = styled.section`
 `;
 
 const Content = styled.div`
-  display: flex;
+  display: flex  ;
   height: 100%;
 `;
 

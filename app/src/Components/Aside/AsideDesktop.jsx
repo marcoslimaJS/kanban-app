@@ -59,15 +59,18 @@ export default AsideDesktop;
 
 const Container = styled.aside`
   background: ${({ theme }) => theme.bgPrimary};
-  padding: 0px 24px 32px 0px;
   //min-width: 280px;
+  padding-bottom: 32px;
+  padding-right: ${({ sidebar }) => (sidebar ? '24px' : '0px')};
   height: 100%;
   border-right: 1px solid ${({ theme }) => theme.lines};
   display: flex;
   flex-direction: column;
-  transition: 500ms all;
-  transition: width 300ms cubic-bezier(0.2, 0, 0, 1) 0s;
-  width: ${({ sidebar }) => (!sidebar ? '0px' : '280px')};
+  transition: 700ms all;
+  width: ${({ sidebar }) => (sidebar ? '348px' : '0')};
+  white-space: nowrap;
+  position: relative;
+  left: ${({ sidebar }) => (sidebar ? '0' : '-150px')};
 `;
 
 const AllBoards = styled.p`
@@ -85,7 +88,6 @@ const BoardItem = styled.li`
   display: flex;
   align-items: center;
   gap: 16px;
-  padding-left: 32px;
   padding: 14px 90px 14px 32px;
   background: ${({ theme }) => theme.colorPrimary};
   border-radius: 0px 100px 100px 0px;

@@ -6,8 +6,6 @@ function Board() {
     <Container>
       <p>todo</p>
       <p>doing</p>
-      <p>teste</p>
-      <p>done</p>
     </Container>
   );
 }
@@ -17,7 +15,6 @@ export default Board;
 const Container = styled.main`
   padding: 24px;
   display: flex;
-  justify-content: space-between;
   width: 100%;
   gap: 20px;
   p{
