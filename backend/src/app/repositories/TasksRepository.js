@@ -13,13 +13,13 @@ class TasksRepository {
     return row;
   }
 
-  async createTask(columnId, { title, order }) {
+  async createTask(columnId, { title, description, order }) {
     const [row] = await db.query(
       `
-      INSERT INTO tasks(columnId, title, "order", created_at) VALUES($1, $2, $3, now())
+      INSERT INTO tasks(columnId, title, description,"order", created_at) VALUES($1, $2, $3, $4,now())
       RETURNING id
     `,
-      [columnId, title, order]
+      [columnId, title, description, order]
     );
     return row;
   }

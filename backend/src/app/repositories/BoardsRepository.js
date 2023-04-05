@@ -12,7 +12,7 @@ class BoardsRepository {
   }
 
   async findBoardById(id) {
-    const [row] = await db.query('SELECT id FROM boards where id = $1', [id]);
+    const [row] = await db.query('SELECT * FROM boards where id = $1', [id]);
     return row;
   }
 

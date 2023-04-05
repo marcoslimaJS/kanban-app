@@ -4,6 +4,20 @@ require('dotenv').config();
 const UsersRepository = require('../repositories/UsersRepository');
 
 class UserController {
+  async show(request, response) {
+    const { userId } = request.params;
+    const userIdExists = await UsersRepository.findUserById(userId);
+    if (!userIdExists) {
+      response
+        .status(400)
+        .json({ error: 'User not found' });
+    }
+
+    const user = await UsersRepository.findUserById(userId);
+    const {password, ...userData} = user;
+    response.send(userData);
+  }
+
   async store(request, response) {
     const { username, password } = request.body;
     if (!username) {
@@ -59,7 +73,7 @@ class UserController {
 
       response
         .status(200)
-        .json({ msg: ' authentication performed successfully', token, userId: user.id });
+        .json({ msg: 'authentication performed successfully', token, userId: user.id });
     } catch (error) {
       response.status(500).json({
         error: 'There was a server error, please try again later.',

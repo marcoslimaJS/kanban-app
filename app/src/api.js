@@ -4,17 +4,17 @@ const api = axios.create({
   baseURL: 'http://localhost:3000',
 });
 
-const token = 'seu-token-aqui';
-
 api.interceptors.request.use((config) => {
+  const token = localStorage.getItem('token');
+
   if (
-    config.url === '/alguma-rota-sem-autenticacao'
-    || config.url === '/outra-rota-sem-autenticacao'
+    config.url === '/login'
+    || config.url === '/register'
   ) {
     return config;
   }
   // eslint-disable-next-line no-param-reassign
-  config.headers.Authorization = `Bearer ${token}`;
+  config.headers.Authorization = `Bearer  ${token}`;
   return config;
 });
 

@@ -2,12 +2,16 @@ import React from 'react';
 // import { useSelector } from 'react-redux';
 import { Navigate } from 'react-router-dom';
 import PropTypes from 'prop-types';
+import { useSelector } from 'react-redux';
 
 function ProtectedRoute({ children }) {
-  // const { data } = useSelector((state) => state.user);
-  const truee = true;
+  const token = localStorage.getItem('token');
+  const userId = localStorage.getItem('userId');
+  const { listBoards } = useSelector((state) => state.boards);
+  console.log(listBoards);
+  // const truee = false;
 
-  return truee ? children : <Navigate to="/login" />;
+  return listBoards && token && userId ? children : <Navigate to="/login" />;
 }
 
 ProtectedRoute.propTypes = {

@@ -2,11 +2,17 @@ const UsersRepository = require('../repositories/UsersRepository');
 const BoardsRepository = require('../repositories/BoardsRepository');
 const ColumnsRepository = require('../repositories/ColumnsRepository');
 const TasksRepository = require('../repositories/TasksRepository');
-const SubtasksRepository = require('../repositories/SubtasksRepository')
+const SubtasksRepository = require('../repositories/SubtasksRepository');
 
 class BoardController {
   async index(request, response) {
     const { userId } = request.params;
+
+    const userIdExists = await BoardsRepository.findUserById(userId);
+    if (!userIdExists) {
+      response.status(400).json({ error: 'User not found' });
+    }
+
     const boards = await BoardsRepository.findAll(userId);
     response.send(boards);
   }
@@ -105,7 +111,9 @@ class BoardController {
     );
 
     for (const [i, { id: columnId }] of columnsOfBoard.entries()) {
-      const allTasksOfColumns = await TasksRepository.findAllTasksByColumnId(columnId);
+      const allTasksOfColumns = await TasksRepository.findAllTasksByColumnId(
+        columnId
+      );
       for (const [i, { id: taskId }] of allTasksOfColumns.entries()) {
         await SubtasksRepository.deleteSubtaskByTaskId(taskId);
       }
@@ -116,6 +124,64 @@ class BoardController {
     await BoardsRepository.deleteBoard(boardId);
 
     response.sendStatus(204);
+  }
+
+  async boardData(request, response) {
+    const { boardId } = request.params;
+    const boardExists = await BoardsRepository.findBoardById(boardId);
+
+    if (!boardExists) {
+      response.status(404).json({ error: 'Board not found' });
+    }
+
+    const boardData = {
+      id: boardExists.id,
+      name: boardExists.name,
+      columns: [],
+    };
+
+    const columns = await ColumnsRepository.findAllColumnsByBoardId(boardId);
+
+    for (const column of columns) {
+      const columnData = {
+        id: column.id,
+        name: column.name,
+        tasks: [],
+      };
+
+      const tasks = await TasksRepository.findAllTasksByColumnId(column.id);
+
+      for (const task of tasks) {
+        const taskData = {
+          id: task.id,
+          title: task.title,
+          description: task.description,
+          subtasks: [],
+        };
+
+        const subtasks = await SubtasksRepository.findAllSubtasksByTaskId(
+          task.id
+        );
+
+        for (const subtask of subtasks) {
+          const subtaskData = {
+            id: subtask.id,
+            title: subtask.title,
+            completed: subtask.completed
+          };
+
+          taskData.subtasks.push(subtaskData);
+        }
+
+        columnData.tasks.push(taskData);
+      }
+
+      boardData.columns.push(columnData);
+    }
+
+    response.json(boardData);
+
+    response.send({ msg: 'Board updated successfully' });
   }
 }
 

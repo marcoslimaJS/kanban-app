@@ -2,14 +2,21 @@ import React from 'react';
 import styled from 'styled-components';
 import PropTypes from 'prop-types';
 
-function Input({ label, placeHolder, type, id, error }) {
+function Input({ label, placeHolder, type, id, error, onChange, onBlur }) {
   return (
-    <div>
+    <Container>
       <Label htmlFor={id} error={error}>
         {label}
       </Label>
-      <InputStyle type={type} id={id} error={error} placeholder={placeHolder} />
-    </div>
+      <InputStyle
+        type={type}
+        id={id}
+        placeholder={placeHolder}
+        onChange={onChange}
+        onBlur={onBlur}
+      />
+      <Error>{error}</Error>
+    </Container>
   );
 }
 
@@ -19,6 +26,8 @@ Input.propTypes = {
   id: PropTypes.string,
   error: PropTypes.string,
   placeHolder: PropTypes.string,
+  onChange: PropTypes.func,
+  onBlur: PropTypes.func,
 };
 
 Input.defaultProps = {
@@ -27,9 +36,15 @@ Input.defaultProps = {
   id: '',
   error: '',
   placeHolder: '',
+  onChange: () => {},
+  onBlur: () => {},
 };
 
 export default Input;
+
+const Container = styled.div`
+  position: relative;
+`;
 
 const InputStyle = styled.input`
   width: 100%;
@@ -56,4 +71,12 @@ const Label = styled.label`
   span {
     font-size: 14px;
   }
+`;
+
+const Error = styled.span`
+  color: ${({ theme }) => theme.delete};
+  position: absolute;
+  right: 16px;
+  bottom: 34px;
+  font-size: 14px;
 `;

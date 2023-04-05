@@ -11,6 +11,7 @@ const router = Router();
 
 router.post('/register', UserController.store);
 router.post('/login', UserController.login);
+router.get('/user/:userId', UserController.show);
 
 router.use((request, response, next) => {
   const authHeader = request.headers['authorization'];
@@ -40,5 +41,7 @@ router.get('/task/:columnId', TaskController.index);
 router.post('/task/:columnId', TaskController.store);
 router.put('/task/:taskId', TaskController.update);
 router.delete('/task/:taskId', TaskController.delete);
+
+router.get('/boardData/:boardId', BoardController.boardData);
 
 module.exports = router;

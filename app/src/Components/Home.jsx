@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import styled from 'styled-components';
 import PropTypes from 'prop-types';
 import { useDispatch, useSelector } from 'react-redux';
@@ -16,6 +16,13 @@ function Home({ setTheme }) {
   const handleSidebar = () => {
     dispatch(showSidebar());
   };
+
+  const token = localStorage.getItem('token');
+  const userId = localStorage.getItem('userId');
+
+  useEffect(() => {
+    console.log(token, userId);
+  }, []);
 
   return (
     <Container>

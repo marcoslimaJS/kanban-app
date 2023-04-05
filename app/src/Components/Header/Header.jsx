@@ -1,17 +1,20 @@
 import React from 'react';
 import styled from 'styled-components';
 // import { ReactComponent as LogoLight } from '../../assets/logo-light.svg';
+import { useSelector } from 'react-redux';
 import { ReactComponent as LogoDark } from '../../assets/logo-dark.svg';
 import { ReactComponent as EditSVG } from '../../assets/icon-vertical-ellipsis.svg';
 import Button from '../Interactive/Button';
 
 function Header() {
+  const { board } = useSelector((state) => state.boards);
+
   return (
     <HeaderHtml>
       <Logo>
         <LogoDark />
       </Logo>
-      <TitleBoard>Platform Launch</TitleBoard>
+      <TitleBoard>{board?.name}</TitleBoard>
       <ButtonsContainer>
         <Button>+ Add New Task</Button>
         <EditButton>
@@ -28,7 +31,7 @@ const HeaderHtml = styled.header`
   display: flex;
   align-items: center;
   gap: 24px;
-  padding: 20px 24px 28px 24px;
+  padding: 12px 24px 12px 24px;
   box-shadow: 0px 4px 6px rgba(54, 78, 126, 0.101545);
   background: ${({ theme }) => theme.bgPrimary};
 `;
@@ -46,12 +49,12 @@ const Logo = styled.div`
     background: ${({ theme }) => theme.lines};
     position: absolute;
     top: -30px;
-    right: 1px;
+    right: -4px;
   }
 `;
 
 const TitleBoard = styled.h1`
-  font-size: 24px;
+  font-size: 20px;
 `;
 
 const ButtonsContainer = styled.div`

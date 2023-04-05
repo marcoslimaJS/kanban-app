@@ -30,8 +30,9 @@ export default Button;
 const ButtonStyled = styled.button`
   background: ${({ theme, bg }) => theme[bg]};
   color: ${({ theme, color }) => theme[color]};
-  padding: 16px 24px;
+  padding: 14px 22px;
   border-radius: 24px;
+  font-size: 12px;
   cursor: pointer;
   transition: 0.3s ease-in-out;
   &:hover {
