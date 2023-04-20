@@ -21,7 +21,7 @@ function Home({ setTheme }) {
   const userId = localStorage.getItem('userId');
 
   useEffect(() => {
-    console.log(token, userId);
+    // console.log(token, userId);
   }, []);
 
   return (
@@ -58,7 +58,7 @@ const Container = styled.section`
 `;
 
 const Content = styled.div`
-  display: flex  ;
+  display: flex;
   height: 100%;
 `;
 

@@ -1,32 +1,106 @@
-import React from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { useSelector } from 'react-redux';
 import styled from 'styled-components';
+import ViewTask from './Modals/ViewTask';
 
 function Board() {
   const { board } = useSelector((state) => state.boards);
+  const { sidebar } = useSelector((state) => state);
+  const [columnsPosition, setColumnsPosition] = useState(null);
+  const taskElement = useRef(null);
+  const columnsElement = useRef([]);
+  const [isDragging, setIsDragging] = useState(false);
+  const [position, setPosition] = useState();
+  const [modalViewTask, setModalViewTask] = useState(null);
+
+  const handleMouseDown = () => {
+    setIsDragging(true);
+  };
+
+  const handleMouseMove = (e) => {
+    if (isDragging) {
+      if (sidebar) {
+        setPosition({ x: e.clientX - 400, y: e.clientY - 115 });
+      } else {
+        setPosition({ x: e.clientX - 100, y: e.clientY - 115 });
+      }
+    }
+  };
+  console.log(position);
+
+  const adjustTaskInColumn = () => {
+    const { x } = position;
+    console.log(x);
+    console.log(columnsPosition[0].x);
+    if (x <= columnsPosition[1].x) {
+      console.log('primeira coluna');
+    } else if (x >= columnsPosition[0].x && x <= columnsPosition[2].x) {
+      console.log('segunda coluna');
+    } else if (x >= columnsPosition[1].x) {
+      console.log('terceira coluna');
+    }
+  };
+
+  const handleMouseUp = () => {
+    setIsDragging(false);
+    console.log(position);
+    adjustTaskInColumn();
+    console.log('MouseUp no pulo');
+  };
+
+  const handleViewTaskModal = (taskId) => {
+    setModalViewTask(taskId);
+  };
+
+  useEffect(() => {
+    const task = taskElement?.current?.getBoundingClientRect();
+    console.log(task);
+  });
+
+  useEffect(() => {
+    const columns = columnsElement?.current;
+    const positions = columns.map((column) => {
+      const { right } = column.getBoundingClientRect();
+      return { x: right };
+    });
+    setColumnsPosition(positions);
+  }, [sidebar]);
+  console.log(columnsPosition);
 
   return (
     <Container>
-      {board?.columns.map(({ name, id: columnId, tasks }) => (
-        <Column key={columnId}>
+      {board?.columns.map(({ name, id: columnId, tasks }, index) => (
+        <Column
+          key={columnId}
+          ref={(element) => {
+            columnsElement.current[index] = element;
+          }}
+        >
           <ColumnTitle>
             {name}
             {`(${tasks.length})`}
           </ColumnTitle>
           {tasks.map(({ title, id: taskId, subtasks }) => (
-            <Task key={taskId}>
+            <Task
+              ref={taskElement}
+              key={taskId}
+              onMouseDown={handleMouseDown}
+              onMouseMove={handleMouseMove}
+              onMouseUp={handleMouseUp}
+              onClick={() => handleViewTaskModal(taskId)}
+              position={position}
+            >
               {title}
               <Subtask>
                 {subtasks.filter(({ completed }) => completed).length}
-                {' '}
                 of subtasks
-                {' '}
                 {subtasks.length}
               </Subtask>
             </Task>
           ))}
         </Column>
       ))}
+      {modalViewTask && <ViewTask taskId={modalViewTask} closeModal={setModalViewTask} />}
     </Container>
   );
 }
@@ -38,6 +112,7 @@ const Container = styled.main`
   display: flex;
   width: 100%;
   gap: 24px;
+  position: relative;
 `;
 
 const Column = styled.div`
@@ -45,6 +120,7 @@ const Column = styled.div`
   flex-direction: column;
   gap: 20px;
   width: 240px;
+  border: 1px solid red;
 `;
 
 const ColumnTitle = styled.h3`
@@ -72,7 +148,12 @@ const Task = styled.div`
   border-radius: 8px;
   font-size: 18px;
   font-weight: 700;
-  cursor: pointer;
+  cursor: move;
+  position: absolute;
+  width: 236px;
+  left: ${({ position }) => position && position.x}px;
+  top: ${({ position }) => position && position.y}px;
+  user-select: none;
 `;
 
 const Subtask = styled.p`

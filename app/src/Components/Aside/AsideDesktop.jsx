@@ -21,7 +21,6 @@ function AsideDesktop({ setTheme }) {
   };
 
   const handleBoardData = (id) => {
-    console.log(id);
     dispatch(boardData(id));
     // navigate('/home/123');
   };
@@ -29,7 +28,6 @@ function AsideDesktop({ setTheme }) {
   useEffect(() => {
     const firstId = boards.listBoards[0].id;
     dispatch(boardData(firstId));
-    console.log(firstId);
   }, []);
 
   return (
@@ -83,7 +81,8 @@ const Container = styled.aside`
   width: ${({ sidebar }) => (sidebar ? '348px' : '0')};
   white-space: nowrap;
   position: relative;
-  left: ${({ sidebar }) => (sidebar ? '0' : '-150px')};
+  z-index: 10;
+  left: ${({ sidebar }) => (sidebar ? '0' : '-160px')};
 `;
 
 const AllBoards = styled.p`

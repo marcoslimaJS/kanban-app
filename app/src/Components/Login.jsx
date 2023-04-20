@@ -32,7 +32,7 @@ function Login() {
 
   useEffect(() => {
     if (user?.userId) {
-      dispatch(getAllBoards(user?.userId));
+      dispatch(getAllBoards(user.userId));
     }
   }, [user?.userId]);
 
@@ -62,7 +62,7 @@ function Login() {
               type="password"
               {...password}
             />
-            <Button bg="white" color="red">
+            <Button bg="white" color="red" type="submit">
               Login
             </Button>
           </FormLogin>

@@ -1,39 +1,48 @@
-import React from 'react';
+import React, { useState } from 'react';
 import styled from 'styled-components';
 // import { ReactComponent as LogoLight } from '../../assets/logo-light.svg';
 import { useSelector } from 'react-redux';
 import { ReactComponent as LogoDark } from '../../assets/logo-dark.svg';
 import { ReactComponent as EditSVG } from '../../assets/icon-vertical-ellipsis.svg';
 import Button from '../Interactive/Button';
+import CreateTask from '../Modals/CreateTask';
 
 function Header() {
   const { board } = useSelector((state) => state.boards);
+  const [ModalCreateTask, setModalCreateTask] = useState(false);
+
+  const openModalCreateTask = () => {
+    setModalCreateTask(true);
+  };
 
   return (
-    <HeaderHtml>
+    <HeaderElement>
       <Logo>
         <LogoDark />
       </Logo>
       <TitleBoard>{board?.name}</TitleBoard>
       <ButtonsContainer>
-        <Button>+ Add New Task</Button>
+        <Button fnClick={openModalCreateTask}>+ Add New Task</Button>
+        {ModalCreateTask && <CreateTask closeModal={setModalCreateTask} />}
         <EditButton>
           <EditSVG />
         </EditButton>
       </ButtonsContainer>
-    </HeaderHtml>
+    </HeaderElement>
   );
 }
 
 export default Header;
 
-const HeaderHtml = styled.header`
+const HeaderElement = styled.header`
   display: flex;
   align-items: center;
   gap: 24px;
   padding: 12px 24px 12px 24px;
   box-shadow: 0px 4px 6px rgba(54, 78, 126, 0.101545);
   background: ${({ theme }) => theme.bgPrimary};
+  position: relative;
+  z-index: 500;
 `;
 
 const Logo = styled.div`

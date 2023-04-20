@@ -2,15 +2,13 @@ import React from 'react';
 import styled from 'styled-components';
 import PropTypes from 'prop-types';
 
-function Input({ label, placeHolder, type, id, error, onChange, onBlur }) {
+function Textarea({ label, placeHolder, type, id, error, onChange, onBlur }) {
   return (
     <Container>
-      {label && (
-        <Label htmlFor={id} error={error}>
-          {label}
-        </Label>
-      )}
-      <InputStyle
+      <Label htmlFor={id} error={error}>
+        {label}
+      </Label>
+      <TextareaStyle
         type={type}
         id={id}
         placeholder={placeHolder}
@@ -22,7 +20,7 @@ function Input({ label, placeHolder, type, id, error, onChange, onBlur }) {
   );
 }
 
-Input.propTypes = {
+Textarea.propTypes = {
   label: PropTypes.string,
   type: PropTypes.string,
   id: PropTypes.string,
@@ -32,7 +30,7 @@ Input.propTypes = {
   onBlur: PropTypes.func,
 };
 
-Input.defaultProps = {
+Textarea.defaultProps = {
   label: '',
   type: 'text',
   id: '',
@@ -42,18 +40,21 @@ Input.defaultProps = {
   onBlur: () => {},
 };
 
-export default Input;
+export default Textarea;
 
 const Container = styled.div`
   position: relative;
 `;
 
-const InputStyle = styled.input`
+const TextareaStyle = styled.textarea`
   width: 100%;
   border-radius: 4px;
   outline: none;
   font-weight: 700;
   padding: 12px 16px;
+  resize: none;
+  overflow-y: hidden;
+  height: 112px;
   border: 1px solid ${({ theme }) => theme.stroke};
   font-family: 'Plus Jakarta Sans';
   &:focus {

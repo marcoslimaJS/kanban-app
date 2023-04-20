@@ -5,6 +5,7 @@ const GlobalStyle = createGlobalStyle`
     margin: 0px;
     padding: 0px;
     box-sizing: border-box;
+    user-select: none;
   }
   ul {
     list-style: none;

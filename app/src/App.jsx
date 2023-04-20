@@ -25,7 +25,6 @@ function App() {
     }
   }, []);
 
-
   useEffect(() => {
     if (listBoards) {
       console.log('foiii');
