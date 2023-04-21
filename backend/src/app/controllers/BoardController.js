@@ -154,6 +154,7 @@ class BoardController {
       for (const task of tasks) {
         const taskData = {
           id: task.id,
+          columnId: task.columnid,
           title: task.title,
           description: task.description,
           subtasks: [],
@@ -180,8 +181,6 @@ class BoardController {
     }
 
     response.json(boardData);
-
-    response.send({ msg: 'Board updated successfully' });
   }
 }
 
