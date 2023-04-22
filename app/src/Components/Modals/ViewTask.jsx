@@ -4,13 +4,16 @@ import PropTypes from 'prop-types';
 import { useSelector } from 'react-redux';
 import Modal from './Modal';
 import { getTaskById } from '../../store/board/tasks';
-import { ReactComponent as EditSVG } from '../../assets/icon-vertical-ellipsis.svg';
+import { ReactComponent as ConfigSVG } from '../../assets/icon-vertical-ellipsis.svg';
 import { ReactComponent as CheckIcon } from '../../assets/icon-check.svg';
 import DropDown from '../Interactive/DropDown';
+import DeleteModal from './DeleteModal';
 
 function ViewTask({ taskId, closeModal }) {
   const task = useSelector(({ boards }) => getTaskById(boards.board, taskId));
   const { columns } = useSelector(({ boards }) => boards.board);
+  const [showConfigModal, setShowConfigModal] = useState(false);
+  const [showDeleteModal, setShowDeleteModal] = useState(false);
 
   console.log(task);
 
@@ -23,16 +26,33 @@ function ViewTask({ taskId, closeModal }) {
     closeModal(false);
   };
 
-  const handleDeleteTask = () => {};
+  const handleShowConfigModal = () => {
+    setShowConfigModal(!showConfigModal);
+  };
+
+  const handleDeleteTask = () => {
+    setShowDeleteModal(true);
+    closeModal(false);
+  };
+
+  const handleEditTask = () => {};
 
   return (
     <Modal onClose={closeViewModal}>
       <ViewTaskContent>
         <Title>
           {task.title}
-          <EditButton onClick={handleDeleteTask}>
-            <EditSVG />
-          </EditButton>
+          <ConfigButton onClick={handleShowConfigModal}>
+            <ConfigSVG />
+            {showConfigModal && (
+              <ConfigModal>
+                <EditButton onClick={handleEditTask}>Edit Task</EditButton>
+                <DeleteButton onClick={handleDeleteTask}>
+                  Delete Task
+                </DeleteButton>
+              </ConfigModal>
+            )}
+          </ConfigButton>
         </Title>
         <Description>{task.description}</Description>
         <Subtasks>
@@ -47,9 +67,7 @@ function ViewTask({ taskId, closeModal }) {
           </span>
           {task.subtasks.map(({ id, title, completed }) => (
             <Subtask key={id} completed={completed}>
-              <Checkbox>
-                {completed && <CheckIcon />}
-              </Checkbox>
+              <Checkbox>{completed && <CheckIcon />}</Checkbox>
               <p>{title}</p>
             </Subtask>
           ))}
@@ -61,6 +79,9 @@ function ViewTask({ taskId, closeModal }) {
           setValue={setStatus}
         />
       </ViewTaskContent>
+      {showDeleteModal && (
+        <DeleteModal taskId={showDeleteModal} closeModal={setShowDeleteModal} />
+      )}
     </Modal>
   );
 }
@@ -92,7 +113,38 @@ const Title = styled.h1`
   line-height: 23px;
 `;
 
-const EditButton = styled.button``;
+const ConfigButton = styled.button`
+  cursor: pointer;
+  position: relative;
+  top: 5px;
+  padding: 5px 10px;
+`;
+
+const ConfigModal = styled.div`
+  position: absolute;
+  top: 45px;
+  left: -86px;
+  padding: 20px;
+  border-radius: 8px;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  box-shadow: 0px 10px 20px rgba(54, 78, 126, 0.25);
+  background: ${({ theme }) => theme.bgPrimary};
+  width: 192px;
+`;
+
+const EditButton = styled.button`
+  color: ${({ theme }) => theme.textSecundary};
+  text-align: start;
+  cursor: pointer;
+`;
+
+const DeleteButton = styled.button`
+  color: ${({ theme }) => theme.delete};
+  text-align: start;
+  cursor: pointer;
+`;
 
 const Description = styled.div`
   color: ${({ theme }) => theme.textSecundary};

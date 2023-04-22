@@ -7,7 +7,7 @@ function Board() {
   const { board } = useSelector((state) => state.boards);
   const { sidebar } = useSelector((state) => state);
   const [columnsPosition, setColumnsPosition] = useState(null);
-  const taskElement = useRef(null);
+  const taskElement = useRef([]);
   const columnsElement = useRef([]);
   const [isDragging, setIsDragging] = useState(false);
   const [position, setPosition] = useState(null);
@@ -20,6 +20,7 @@ function Board() {
 
   const handleMouseMove = (e, taskId) => {
     console.log('teste');
+    // console.log(dropTask);
     if (isDragging) {
       setDropTask(taskId);
       if (sidebar) {
@@ -33,42 +34,49 @@ function Board() {
 
   const adjustTaskInColumn = () => {
     const { x } = position;
-    console.log(`${x}: Posição da Task`);
-    console.log(`${columnsPosition[1].x}: posição da coluna 2`);
+    console.log(dropTask);
+    const taskCurrent = taskElement.current.find(({ id }) => id === dropTask);
+    // console.log(`${x}: Posição da Task`);
+    // console.log(`${columnsPosition[1].x}: posição da coluna 2`);
     if (x < columnsPosition[0].x) {
       console.log('primeira coluna');
+      columnsElement.current[0].appendChild(taskCurrent);
     } else if (x < columnsPosition[1].x) {
       console.log('segunda coluna');
+      columnsElement.current[1].appendChild(taskCurrent);
     } else if (x < columnsPosition[2].x) {
       console.log('terceira coluna');
+      columnsElement.current[2].appendChild(taskCurrent);
     }
   };
 
   const handleMouseUp = () => {
-    setDropTask('');
     setIsDragging(false);
     console.log(position);
     adjustTaskInColumn();
+    setDropTask('');
     console.log('MouseUp no pulo');
   };
 
   const handleViewTaskModal = (taskId) => {
-    // setModalViewTask(taskId);
+    setModalViewTask(taskId);
   };
 
   useEffect(() => {
-    const task = taskElement?.current?.getBoundingClientRect();
-    console.log(task);
+    // const task = taskElement?.current?.getBoundingClientRect();
+    // console.log(task);
   });
 
   useEffect(() => {
     console.log('USSEFEEECTFFFGFDSGDSFG');
     const columns = columnsElement?.current;
-    const positions = columns.map((column) => {
-      const { right } = column.getBoundingClientRect();
-      return { x: right };
-    });
-    setColumnsPosition(positions);
+    if (columns) {
+      const positions = columns.map((column) => {
+        const { right } = column.getBoundingClientRect();
+        return { x: right };
+      });
+      setColumnsPosition(positions);
+    }
   }, [sidebar]);
   console.log(columnsPosition);
 
@@ -85,12 +93,14 @@ function Board() {
             {name}
             {`(${tasks.length})`}
           </ColumnTitle>
-          {tasks.map(({ title, id: taskId, subtasks }) => (
+          {tasks.map(({ title, id: taskId, subtasks }, i) => (
             <Task
-              ref={taskElement}
+              ref={(element) => {
+                taskElement.current[i] = element;
+              }}
               key={taskId}
               onMouseDown={handleMouseDown}
-              onMouseMove={(e) => handleMouseMove(e, taskId)}
+              onMouseMove={isDragging ? ((e) => handleMouseMove(e, taskId)) : undefined}
               onMouseUp={handleMouseUp}
               onClick={() => handleViewTaskModal(taskId)}
               position={position}
@@ -100,8 +110,12 @@ function Board() {
               {title}
               <Subtask>
                 {subtasks.filter(({ completed }) => completed).length}
-                of subtasks
+                {' '}
+                of
+                {' '}
                 {subtasks.length}
+                {' '}
+                subtasks
               </Subtask>
             </Task>
           ))}
@@ -151,6 +165,7 @@ const ColumnTitle = styled.h3`
 
 const Task = styled.div`
   background: ${({ theme }) => theme.bgPrimary};
+  background: #b8b8ce;
   box-shadow: 0px 4px 6px rgba(54, 78, 126, 0.101545);
   padding: 22px 16px;
   border-radius: 8px;
