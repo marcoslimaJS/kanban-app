@@ -8,7 +8,7 @@ class UserController {
     const { userId } = request.params;
     const userIdExists = await UsersRepository.findUserById(userId);
     if (!userIdExists) {
-      response
+      return response
         .status(400)
         .json({ error: 'User not found' });
     }

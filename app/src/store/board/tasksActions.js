@@ -17,7 +17,7 @@ export const deleteTask = createAsyncThunk(
   'task/deleteTask',
   async ({ taskId, body }, { rejectWithValue }) => {
     try {
-      const response = await api.delete(`/board/${taskId}`, body);
+      const response = await api.delete(`/task/${taskId}`, body);
       return response.data;
     } catch (error) {
       return rejectWithValue(error.response.data);
@@ -29,7 +29,7 @@ export const updateTask = createAsyncThunk(
   'task/updateTask',
   async ({ taskId, body }, { rejectWithValue }) => {
     try {
-      const response = await api.update(`/task/${taskId}`, body);
+      const response = await api.put(`/task/${taskId}`, body);
       return response.data;
     } catch (error) {
       return rejectWithValue(error.response.data);

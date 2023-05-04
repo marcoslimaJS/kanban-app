@@ -11,6 +11,6 @@
   },
   "rules": {
     "import/no-extraneous-dependencies": "off",
-    "class-methods-use-this": "off"
+    "class-methods-use-this": "off",
   }
 }

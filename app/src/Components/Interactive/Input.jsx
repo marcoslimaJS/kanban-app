@@ -2,7 +2,7 @@ import React from 'react';
 import styled from 'styled-components';
 import PropTypes from 'prop-types';
 
-function Input({ label, placeHolder, type, id, error, onChange, onBlur }) {
+function Input({ label, placeHolder, type, id, error, defaultValue, onChange, onBlur }) {
   return (
     <Container>
       {label && (
@@ -16,6 +16,7 @@ function Input({ label, placeHolder, type, id, error, onChange, onBlur }) {
         placeholder={placeHolder}
         onChange={onChange}
         onBlur={onBlur}
+        defaultValue={defaultValue}
       />
       <Error>{error}</Error>
     </Container>
@@ -28,6 +29,7 @@ Input.propTypes = {
   id: PropTypes.string,
   error: PropTypes.string,
   placeHolder: PropTypes.string,
+  defaultValue: PropTypes.string,
   onChange: PropTypes.func,
   onBlur: PropTypes.func,
 };
@@ -38,6 +40,7 @@ Input.defaultProps = {
   id: '',
   error: '',
   placeHolder: '',
+  defaultValue: '',
   onChange: () => {},
   onBlur: () => {},
 };
@@ -80,6 +83,6 @@ const Error = styled.span`
   color: ${({ theme }) => theme.delete};
   position: absolute;
   right: 16px;
-  bottom: 34px;
+  bottom: 14px;
   font-size: 14px;
 `;

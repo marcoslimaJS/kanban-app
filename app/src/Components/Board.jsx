@@ -6,7 +6,7 @@ import ViewTask from './Modals/ViewTask';
 function Board() {
   const { board } = useSelector((state) => state.boards);
   const { sidebar } = useSelector((state) => state);
-  const [columnsPosition, setColumnsPosition] = useState(null);
+  const [columnsPosition, setColumnsPosition] = useState([]);
   const taskElement = useRef([]);
   const columnsElement = useRef([]);
   const [isDragging, setIsDragging] = useState(false);
@@ -33,11 +33,11 @@ function Board() {
   console.log(position);
 
   const adjustTaskInColumn = () => {
-    const { x } = position;
-    console.log(dropTask);
+    const x = position?.x;
+    // console.log(dropTask);
     const taskCurrent = taskElement.current.find(({ id }) => id === dropTask);
-    // console.log(`${x}: Posição da Task`);
-    // console.log(`${columnsPosition[1].x}: posição da coluna 2`);
+    console.log(`${x}: Posição da Task`);
+    console.log(columnsPosition);
     if (x < columnsPosition[0].x) {
       console.log('primeira coluna');
       columnsElement.current[0].appendChild(taskCurrent);
@@ -68,9 +68,10 @@ function Board() {
   });
 
   useEffect(() => {
-    console.log('USSEFEEECTFFFGFDSGDSFG');
+    console.log('useffect siderbar');
     const columns = columnsElement?.current;
     if (columns) {
+      console.log('ifffffffff');
       const positions = columns.map((column) => {
         const { right } = column.getBoundingClientRect();
         return { x: right };

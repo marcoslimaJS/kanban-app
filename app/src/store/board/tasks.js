@@ -7,6 +7,7 @@ const taskSlice = createSlice({
   name: 'task',
   initialState: {
     data: null,
+    refresh: 0,
     loading: false,
     error: null,
   },
@@ -19,6 +20,7 @@ const taskSlice = createSlice({
       .addCase(createTask.fulfilled, (state, action) => {
         state.loading = false;
         state.data = action.payload;
+        state.refresh += 1;
       })
       .addCase(createTask.rejected, (state, action) => {
         state.loading = false;
@@ -27,9 +29,9 @@ const taskSlice = createSlice({
       .addCase(deleteTask.pending, (state) => {
         state.loading = true;
       })
-      .addCase(deleteTask.fulfilled, (state, action) => {
+      .addCase(deleteTask.fulfilled, (state) => {
         state.loading = false;
-        state.board = action.payload;
+        state.refresh += 1;
       })
       .addCase(deleteTask.rejected, (state, action) => {
         state.loading = false;
@@ -38,14 +40,15 @@ const taskSlice = createSlice({
 
       .addCase(updateTask.pending, (state) => {
         state.loading = true;
+        console.log(state);
       })
-      .addCase(updateTask.fulfilled, (state, action) => {
+      .addCase(updateTask.fulfilled, (state) => {
         state.loading = false;
-        state.user = action.payload;
+        state.refresh += 1;
       })
       .addCase(updateTask.rejected, (state, action) => {
         state.loading = false;
-        state.error = action.payload.error;
+        state.error = action.error.message;
       });
   },
 });

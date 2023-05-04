@@ -8,7 +8,7 @@ class TaskController {
 
     const columnExists = await ColumnsRepository.findColumnById(columnId);
     if (!columnExists) {
-      response.status(404).json({ error: 'Column not found' });
+      return response.status(404).json({ error: 'Column not found' });
     }
 
     const boards = await TasksRepository.findAllTasksByColumnId(columnId);
@@ -21,10 +21,10 @@ class TaskController {
 
     const columnExists = await ColumnsRepository.findColumnById(columnId);
     if (!columnExists) {
-      response.status(404).json({ error: 'Column not found' });
+      return response.status(404).json({ error: 'Column not found' });
     }
     if (!title) {
-      response.status(400).json({ error: 'Title is required' });
+      return response.status(400).json({ error: 'Title is required' });
     }
 
     const tasks = await TasksRepository.findAllTasksByColumnId(columnId);
@@ -41,13 +41,13 @@ class TaskController {
     });
 
     if (!taskId) {
-      response.status(400).json({ error: 'Error creating task' });
+      return response.status(400).json({ error: 'Error creating task' });
     }
 
-    for (const [index, title] of subtasks.entries()) {
+    for (const [index, task] of subtasks.entries()) {
       await SubtasksRepository.createSubtask({
         taskId: taskId.id,
-        title,
+        title: task.title,
         order: parseInt(index) + 1,
         completed: false,
       });
@@ -64,15 +64,15 @@ class TaskController {
     const columnExists = await ColumnsRepository.findColumnById(columnId);
 
     if (!taskExists) {
-      response.status(404).json({ error: 'Task not found' });
+      return response.status(404).json({ error: 'Task not found' });
     }
 
     if (!columnExists) {
-      response.status(400).json({ error: 'Column not found' });
+      return response.status(400).json({ error: 'Column not found' });
     }
 
     if (!title) {
-      response.status(400).json({ error: 'Title is required' });
+      return response.status(400).json({ error: 'Title is required' });
     }
 
     await TasksRepository.updateTask(taskId, { title, description, columnId });
@@ -122,10 +122,10 @@ class TaskController {
     const columnExists = await ColumnsRepository.findColumnById(columnId);
 
     if (!taskExists) {
-      response.status(404).json({ error: 'Task not found' });
+      return response.status(404).json({ error: 'Task not found' });
     }
     if (!columnExists) {
-      response.status(400).json({ error: 'Column not found' });
+      return response.status(400).json({ error: 'Column not found' });
     }
 
     await SubtasksRepository.deleteSubtaskByTaskId(taskId);

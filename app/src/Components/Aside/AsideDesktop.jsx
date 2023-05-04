@@ -1,4 +1,5 @@
-import React, { useEffect } from 'react';
+/* eslint-disable react/jsx-one-expression-per-line */
+import React, { useEffect, useState } from 'react';
 import styled from 'styled-components';
 import PropTypes from 'prop-types';
 import { useDispatch, useSelector } from 'react-redux';
@@ -10,10 +11,12 @@ import { ReactComponent as HideSVG } from '../../assets/icon-hide-sidebar.svg';
 import SwitchButton from '../Interactive/SwitchButton';
 import { hideSidebar } from '../../store/sidebar';
 import { boardData } from '../../store/board/boardsActions';
+import CreateBoard from '../Modals/CreateBoard';
 
 function AsideDesktop({ setTheme }) {
   const dispatch = useDispatch();
-  const { sidebar, boards } = useSelector((state) => state);
+  const { sidebar, boards, tasks } = useSelector((state) => state);
+  const [showModalCreateBoard, setShowModalCreateBoard] = useState(false);
   // const navigate = useNavigate();
 
   const handleSidebar = () => {
@@ -25,6 +28,10 @@ function AsideDesktop({ setTheme }) {
     // navigate('/home/123');
   };
 
+  const createBoard = () => {
+    setShowModalCreateBoard(true);
+  };
+
   useEffect(() => {
     const firstId = boards.listBoards[0].id;
     dispatch(boardData(firstId));
@@ -32,7 +39,7 @@ function AsideDesktop({ setTheme }) {
 
   return (
     <Container sidebar={sidebar}>
-      <AllBoards>All Boards (3)</AllBoards>
+      <AllBoards>All Boards ({boards.listBoards.length})</AllBoards>
       <BoardList>
         {boards.listBoards.map(({ name, id }) => (
           <BoardItem
@@ -45,6 +52,10 @@ function AsideDesktop({ setTheme }) {
           </BoardItem>
         ))}
       </BoardList>
+      <ButtonCreateBoard onClick={createBoard}>
+        <BoardSVG />
+        + Create New Board
+      </ButtonCreateBoard>
       <ThemeMode>
         <LightSVG />
         <SwitchButton setTheme={setTheme} />
@@ -54,6 +65,7 @@ function AsideDesktop({ setTheme }) {
         <HideSVG />
         <span>Hide Sidebar</span>
       </HideSidebar>
+      {showModalCreateBoard && <CreateBoard closeModal={setShowModalCreateBoard} />}
     </Container>
   );
 }
@@ -81,13 +93,18 @@ const Container = styled.aside`
   width: ${({ sidebar }) => (sidebar ? '348px' : '0')};
   white-space: nowrap;
   position: relative;
-  z-index: 10;
+  z-index: 300;
   left: ${({ sidebar }) => (sidebar ? '0' : '-160px')};
+  font-size: 15px;
 `;
 
 const AllBoards = styled.p`
   padding-left: 32px;
   margin-bottom: 16px;
+  margin-top: 16px;
+  text-transform: uppercase;
+  letter-spacing: 2.4px;
+  color: ${({ theme }) => theme.textSecundary};
 `;
 
 const BoardList = styled.ul`
@@ -100,7 +117,7 @@ const BoardItem = styled.li`
   display: flex;
   align-items: center;
   gap: 16px;
-  padding: 14px 90px 14px 32px;
+  padding: 14px 0px 14px 32px;
   background: ${({ theme, current }) => current && theme.colorPrimary};
   color: ${({ theme, current }) => (current ? theme.white : theme.textSecundary)};
   border-radius: 0px 100px 100px 0px;
@@ -109,6 +126,18 @@ const BoardItem = styled.li`
   path {
     fill: ${({ theme, current }) => current && theme.white};
     transition: 0.4s ease-in-out;
+  }
+`;
+
+const ButtonCreateBoard = styled.button`
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  padding: 14px 0px 14px 32px;
+  color: ${({ theme }) => theme.colorPrimary};
+  cursor: pointer;
+  path {
+    fill: ${({ theme }) => theme.colorPrimary};
   }
 `;
 

@@ -8,12 +8,14 @@ import { ReactComponent as ConfigSVG } from '../../assets/icon-vertical-ellipsis
 import { ReactComponent as CheckIcon } from '../../assets/icon-check.svg';
 import DropDown from '../Interactive/DropDown';
 import DeleteModal from './DeleteModal';
+import CreateTask from './CreateTask';
 
 function ViewTask({ taskId, closeModal }) {
   const task = useSelector(({ boards }) => getTaskById(boards.board, taskId));
   const { columns } = useSelector(({ boards }) => boards.board);
   const [showConfigModal, setShowConfigModal] = useState(false);
   const [showDeleteModal, setShowDeleteModal] = useState(false);
+  const [showEditModal, setShowEditModal] = useState(false);
 
   console.log(task);
 
@@ -32,25 +34,27 @@ function ViewTask({ taskId, closeModal }) {
 
   const handleDeleteTask = () => {
     setShowDeleteModal(true);
-    closeModal(false);
   };
 
-  const handleEditTask = () => {};
+  const handleEditTask = () => {
+    setShowEditModal(true);
+  };
 
   return (
     <Modal onClose={closeViewModal}>
+      {(!showDeleteModal && !showEditModal) && (
       <ViewTaskContent>
         <Title>
           {task.title}
           <ConfigButton onClick={handleShowConfigModal}>
             <ConfigSVG />
             {showConfigModal && (
-              <ConfigModal>
-                <EditButton onClick={handleEditTask}>Edit Task</EditButton>
-                <DeleteButton onClick={handleDeleteTask}>
-                  Delete Task
-                </DeleteButton>
-              </ConfigModal>
+            <ConfigModal>
+              <EditButton onClick={handleEditTask}>Edit Task</EditButton>
+              <DeleteButton onClick={handleDeleteTask}>
+                Delete Task
+              </DeleteButton>
+            </ConfigModal>
             )}
           </ConfigButton>
         </Title>
@@ -79,8 +83,12 @@ function ViewTask({ taskId, closeModal }) {
           setValue={setStatus}
         />
       </ViewTaskContent>
+      ) }
       {showDeleteModal && (
-        <DeleteModal taskId={showDeleteModal} closeModal={setShowDeleteModal} />
+        <DeleteModal id={showDeleteModal} closeModal={setShowDeleteModal} />
+      )}
+      {showEditModal && (
+      <CreateTask taskId={taskId} closeModal={setShowEditModal} />
       )}
     </Modal>
   );

@@ -7,7 +7,7 @@ class SubtaskController {
 
     const boardExists = await BoardsRepository.findBoardById(boardId);
     if (!boardExists) {
-      response.status(404).json({ error: 'Board not found' });
+      return response.status(404).json({ error: 'Board not found' });
     }
 
     const boards = await ColumnsRepository.findAllColumnsByBoardId(boardId);
@@ -20,7 +20,7 @@ class SubtaskController {
 
     const boardExists = await BoardsRepository.findBoardById(boardId);
     if (!boardExists) {
-      response.status(404).json({ error: 'Board not found' });
+      return response.status(404).json({ error: 'Board not found' });
     }
 
     const boards = await ColumnsRepository.findAllColumnsByBoardId(boardId);

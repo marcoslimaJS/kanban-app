@@ -1,13 +1,14 @@
 /* eslint-disable no-unused-expressions */
 /* eslint-disable no-param-reassign */
 import { createSlice } from '@reduxjs/toolkit';
-import { getAllBoards, createBoard, boardData } from './boardsActions';
+import { getAllBoards, createBoard, boardData, deleteBoard, updateBoard } from './boardsActions';
 
 const boardSlice = createSlice({
   name: 'board',
   initialState: {
     board: null,
     listBoards: null,
+    refresh: 0,
     loading: false,
     error: null,
   },
@@ -25,6 +26,7 @@ const boardSlice = createSlice({
         state.loading = false;
         state.error = action.error.message;
       })
+
       .addCase(boardData.pending, (state) => {
         state.loading = true;
       })
@@ -40,11 +42,35 @@ const boardSlice = createSlice({
       .addCase(createBoard.pending, (state) => {
         state.loading = true;
       })
-      .addCase(createBoard.fulfilled, (state, action) => {
+      .addCase(createBoard.fulfilled, (state) => {
         state.loading = false;
-        state.user = action.payload;
+        state.refresh += 1;
       })
       .addCase(createBoard.rejected, (state, action) => {
+        state.loading = false;
+        state.error = action.payload.error;
+      })
+
+      .addCase(updateBoard.pending, (state) => {
+        state.loading = true;
+      })
+      .addCase(updateBoard.fulfilled, (state) => {
+        state.loading = false;
+        state.refresh += 1;
+      })
+      .addCase(updateBoard.rejected, (state, action) => {
+        state.loading = false;
+        state.error = action.payload.error;
+      })
+
+      .addCase(deleteBoard.pending, (state) => {
+        state.loading = true;
+      })
+      .addCase(deleteBoard.fulfilled, (state) => {
+        state.loading = false;
+        state.refresh += 1;
+      })
+      .addCase(deleteBoard.rejected, (state, action) => {
         state.loading = false;
         state.error = action.payload.error;
       });

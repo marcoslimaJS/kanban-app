@@ -12,6 +12,7 @@ import { getAllBoards } from './store/board/boardsActions';
 function App() {
   const [theme, setTheme] = useState(light);
   const { listBoards } = useSelector((state) => state.boards);
+  const { refresh } = useSelector((state) => state.boards);
   const dispatch = useDispatch();
   const navigate = useNavigate();
 
@@ -23,11 +24,10 @@ function App() {
     if (token && userId) {
       dispatch(getAllBoards(userId));
     }
-  }, []);
+  }, [refresh]);
 
   useEffect(() => {
     if (listBoards) {
-      console.log('foiii');
       navigate('/home');
     }
   }, [listBoards]);

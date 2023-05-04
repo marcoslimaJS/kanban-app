@@ -10,7 +10,7 @@ class BoardController {
 
     const userIdExists = await BoardsRepository.findUserById(userId);
     if (!userIdExists) {
-      response.status(400).json({ error: 'User not found' });
+      return response.status(400).json({ error: 'User not found' });
     }
 
     const boards = await BoardsRepository.findAll(userId);
@@ -22,24 +22,24 @@ class BoardController {
     const { name, columns } = request.body;
     const userIdExists = await BoardsRepository.findUserById(userId);
     if (!userIdExists) {
-      response
+      return response
         .status(400)
         .json({ error: 'User not found when trying to create board' });
     }
     if (!name) {
-      response.status(400).json({ error: 'Name is required' });
+      return response.status(400).json({ error: 'Name is required' });
     }
 
     const boardId = await BoardsRepository.createBoard(userId, { name });
 
     if (!boardId) {
-      response.status(400).json({ error: 'Error creating board' });
+      return response.status(400).json({ error: 'Error creating board' });
     }
 
-    for (const [index, name] of columns.entries()) {
+    for (const [index, column] of columns.entries()) {
       await ColumnsRepository.createColumn({
         boardId: boardId.id,
-        name,
+        name: column.name,
         order: parseInt(index) + 1,
       });
     }
@@ -53,10 +53,10 @@ class BoardController {
     const boardExists = await BoardsRepository.findBoardById(boardId);
 
     if (!boardExists) {
-      response.status(404).json({ error: 'Board not found' });
+      return response.status(404).json({ error: 'Board not found' });
     }
     if (!name) {
-      response.status(400).json({ error: 'Name is required' });
+      return response.status(400).json({ error: 'Name is required' });
     }
     await BoardsRepository.updateBoard(boardId, { name });
 
@@ -94,16 +94,15 @@ class BoardController {
   async delete(request, response) {
     const { boardId } = request.params;
     const { userId } = request.body;
-
     const userExists = await UsersRepository.findUserById(userId);
     const boardExists = await BoardsRepository.findBoardById(boardId);
 
     if (!userExists) {
-      response.status(400).json({ error: 'User not found' });
+      return response.status(400).json({ error: 'User not found' });
     }
 
     if (!boardExists) {
-      response.status(404).json({ error: 'Board not found' });
+      return response.status(404).json({ error: 'Board not found' });
     }
 
     const columnsOfBoard = await ColumnsRepository.findAllColumnsByBoardId(
@@ -131,7 +130,7 @@ class BoardController {
     const boardExists = await BoardsRepository.findBoardById(boardId);
 
     if (!boardExists) {
-      response.status(404).json({ error: 'Board not found' });
+      return response.status(404).json({ error: 'Board not found' });
     }
 
     const boardData = {

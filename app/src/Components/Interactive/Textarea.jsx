@@ -2,7 +2,7 @@ import React from 'react';
 import styled from 'styled-components';
 import PropTypes from 'prop-types';
 
-function Textarea({ label, placeHolder, type, id, error, onChange, onBlur }) {
+function Textarea({ label, placeHolder, type, id, error, defaultValue, onChange, onBlur }) {
   return (
     <Container>
       <Label htmlFor={id} error={error}>
@@ -14,6 +14,7 @@ function Textarea({ label, placeHolder, type, id, error, onChange, onBlur }) {
         placeholder={placeHolder}
         onChange={onChange}
         onBlur={onBlur}
+        defaultValue={defaultValue}
       />
       <Error>{error}</Error>
     </Container>
@@ -26,6 +27,7 @@ Textarea.propTypes = {
   id: PropTypes.string,
   error: PropTypes.string,
   placeHolder: PropTypes.string,
+  defaultValue: PropTypes.string,
   onChange: PropTypes.func,
   onBlur: PropTypes.func,
 };
@@ -36,6 +38,7 @@ Textarea.defaultProps = {
   id: '',
   error: '',
   placeHolder: '',
+  defaultValue: '',
   onChange: () => {},
   onBlur: () => {},
 };

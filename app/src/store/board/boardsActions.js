@@ -15,9 +15,33 @@ export const getAllBoards = createAsyncThunk(
 
 export const createBoard = createAsyncThunk(
   'board/createBoard',
-  async (userData, userId, { rejectWithValue }) => {
+  async ({ body, userId }, { rejectWithValue }) => {
     try {
-      const response = await api.post(`/board/${userId}`, userData);
+      const response = await api.post(`/board/${userId}`, body);
+      return response.data;
+    } catch (error) {
+      return rejectWithValue(error.response.data);
+    }
+  },
+);
+
+export const updateBoard = createAsyncThunk(
+  'board/updateBoard',
+  async ({ boardId, body }, { rejectWithValue }) => {
+    try {
+      const response = await api.put(`/board/${boardId}`, body);
+      return response.data;
+    } catch (error) {
+      return rejectWithValue(error.response.data);
+    }
+  },
+);
+
+export const deleteBoard = createAsyncThunk(
+  'board/deleteBoard',
+  async ({ boardId, body }, { rejectWithValue }) => {
+    try {
+      const response = await api.delete(`/board/${boardId}`, { data: body });
       return response.data;
     } catch (error) {
       return rejectWithValue(error.response.data);

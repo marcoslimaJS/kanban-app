@@ -9,9 +9,11 @@ import DropDown from '../Interactive/DropDown';
 import Textarea from '../Interactive/Textarea';
 import Input from '../Interactive/Input';
 import { ReactComponent as Remove } from '../../assets/icon-cross.svg';
-import { createTask } from '../../store/board/tasksActions';
+import { createTask, updateTask } from '../../store/board/tasksActions';
+import { getTaskById } from '../../store/board/tasks';
 
-function CreateTask({ closeModal }) {
+function CreateTask({ taskId, closeModal }) {
+  const task = useSelector(({ boards }) => getTaskById(boards.board, taskId));
   const { board } = useSelector((state) => state.boards);
   const dispatch = useDispatch();
   const options = board.columns.map(({ name, id }) => ({
@@ -21,14 +23,15 @@ function CreateTask({ closeModal }) {
   const [status, setStatus] = useState(options[options.length - 1]);
   const title = useForm();
   const description = useForm();
-  const [subtasks, setSubtasks] = useState([]);
-
+  const [subtasks, setSubtasks] = useState(task?.subtasks || []);
+  console.log(task);
+  console.log(subtasks);
   const closeModalCreateTask = () => {
     closeModal(false);
   };
 
   const createNewSubtask = () => {
-    setSubtasks([...subtasks, '']);
+    setSubtasks([...subtasks, { title: '', id: '', completed: false }]);
   };
 
   const removeSubtask = (index) => {
@@ -39,7 +42,8 @@ function CreateTask({ closeModal }) {
 
   const changeSubstasks = (event, index) => {
     const newValues = [...subtasks];
-    newValues[index] = event.target.value;
+    const updatedSubtask = { ...newValues[index], title: event.target.value };
+    newValues[index] = updatedSubtask;
     setSubtasks(newValues);
   };
 
@@ -55,20 +59,36 @@ function CreateTask({ closeModal }) {
     closeModalCreateTask();
   };
 
+  const handleUpdateTask = (e) => {
+    e.preventDefault();
+    const body = {
+      title: title.value,
+      description: description.value,
+      subtasks,
+      columnId: status.value,
+    };
+    console.log('update');
+    console.log(body);
+    dispatch(updateTask({ taskId, body }));
+    closeModalCreateTask();
+  };
+
   return (
     <Modal onClose={closeModalCreateTask}>
-      <CreateTaskContent onSubmit={handleCreateTask}>
+      <CreateTaskContent onSubmit={!taskId ? handleCreateTask : handleUpdateTask}>
         <h2>Add New Task</h2>
         <Input
           label="Title"
           id="title"
           placeHolder="e.g. Take coffee break"
+          defaultValue={task?.title}
           {...title}
         />
         <Textarea
           label="Description"
           id="description"
           placeHolder="e.g. It’s always good to take a break. This 15 minute break will recharge the batteries a little."
+          defaultValue={task?.description}
           {...description}
         />
         <SubtasksContainer>
@@ -77,6 +97,7 @@ function CreateTask({ closeModal }) {
             <SubtaskInput key={index}>
               <Input
                 placeHolder="Subtask"
+                defaultValue={item.title}
                 onChange={(event) => changeSubstasks(event, index)}
               />
               <Remove onClick={() => removeSubtask(index)} data-index={index} />
@@ -97,7 +118,7 @@ function CreateTask({ closeModal }) {
           value={status}
           setValue={setStatus}
         />
-        <Button type="submit">Create Task</Button>
+        <Button type="submit">{!taskId ? 'Create Task' : 'Save Changes'}</Button>
       </CreateTaskContent>
     </Modal>
   );
@@ -105,10 +126,12 @@ function CreateTask({ closeModal }) {
 
 CreateTask.propTypes = {
   closeModal: PropTypes.func,
+  taskId: PropTypes.string,
 };
 
 CreateTask.defaultProps = {
   closeModal: () => {},
+  taskId: null,
 };
 
 export default CreateTask;

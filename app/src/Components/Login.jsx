@@ -13,7 +13,6 @@ import { getAllBoards } from '../store/board/boardsActions';
 function Login() {
   const { listBoards } = useSelector((state) => state.boards);
   const { user } = useSelector((state) => state.auth);
-  console.log(listBoards);
 
   const dispatch = useDispatch();
   const username = useForm();
