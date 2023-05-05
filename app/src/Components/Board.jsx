@@ -18,8 +18,13 @@ function Board() {
     setIsDragging(true);
   };
 
-  const handleMouseMove = (e, taskId) => {
+  const handleMouseMove = (event, taskId) => {
     console.log('teste');
+    console.log(event);
+    let e = event;
+    if (e.type === 'touchmove') {
+      e = event.touches[0]
+    }
     // console.log(dropTask);
     if (isDragging) {
       setDropTask(taskId);
@@ -103,6 +108,9 @@ function Board() {
               onMouseDown={handleMouseDown}
               onMouseMove={isDragging ? ((e) => handleMouseMove(e, taskId)) : undefined}
               onMouseUp={handleMouseUp}
+              onTouchStart={handleMouseDown}
+              onTouchMove={isDragging ? ((e) => handleMouseMove(e, taskId)) : undefined}
+              onTouchEnd={handleMouseUp}
               onClick={() => handleViewTaskModal(taskId)}
               position={position}
               drop={dropTask}
@@ -137,6 +145,7 @@ const Container = styled.main`
   width: 100%;
   gap: 24px;
   position: relative;
+  overflow: auto;
 `;
 
 const Column = styled.div`
@@ -170,7 +179,7 @@ const Task = styled.div`
   box-shadow: 0px 4px 6px rgba(54, 78, 126, 0.101545);
   padding: 22px 16px;
   border-radius: 8px;
-  font-size: 18px;
+  font-size: 16px;
   font-weight: 700;
   cursor: move;
   position: ${({ drop, id }) => (drop === id ? 'absolute' : 'initial')};
@@ -183,5 +192,5 @@ const Task = styled.div`
 const Subtask = styled.p`
   color: ${({ theme }) => theme.textSecundary};
   margin-top: 8px;
-  font-size: 14px;
+  font-size: 13px;
 `;

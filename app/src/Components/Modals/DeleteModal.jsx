@@ -4,6 +4,7 @@ import { useDispatch } from 'react-redux';
 import Modal from './Modal';
 import Button from '../Interactive/Button';
 import { deleteBoard } from '../../store/board/boardsActions';
+import { deleteTask } from '../../store/board/tasksActions';
 
 const getDescriptions = (type, name) => {
   const descriptions = {
@@ -24,8 +25,14 @@ function DeleteModal({ id, closeModal, data }) {
     const body = {
       userId: data.userId,
     };
-    const response = await dispatch(deleteBoard({ boardId: id, body }));
-    console.log(response);
+    if (data.type === 'board') {
+      const response = await dispatch(deleteBoard({ boardId: id, body }));
+      console.log(response);
+    }
+    if (data.type === 'task') {
+      const response = await dispatch(deleteTask({ taskId: id, body }));
+      console.log(response);
+    }
     closeDeleteModal();
   };
 

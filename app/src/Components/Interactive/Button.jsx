@@ -1,11 +1,12 @@
 import React from 'react';
 import styled from 'styled-components';
 import PropTypes from 'prop-types';
+import { ReactComponent as AddIcon } from '../../assets/icon-add-task-mobile.svg';
 
-function Button({ children, bg, hover, color, fnClick, type }) {
+function Button({ children, bg, hover, color, fnClick, type, mobile }) {
   return (
     <ButtonStyled bg={bg} hover={hover} color={color} onClick={fnClick} type={type}>
-      {children}
+      {!mobile ? children : <AddIcon />}
     </ButtonStyled>
   );
 }
@@ -17,6 +18,7 @@ Button.propTypes = {
   color: PropTypes.string,
   fnClick: PropTypes.func,
   type: PropTypes.string,
+  mobile: PropTypes.bool,
 };
 
 Button.defaultProps = {
@@ -25,6 +27,7 @@ Button.defaultProps = {
   color: 'white',
   fnClick: () => {},
   type: 'button',
+  mobile: false,
 };
 
 export default Button;
@@ -38,6 +41,9 @@ const ButtonStyled = styled.button`
   width: 100%;
   cursor: pointer;
   transition: 0.3s ease-in-out;
+  display: flex;
+  align-items: center;
+  justify-content: center;
   &:hover {
     background: ${({ theme, hover }) => theme[hover]};
   }

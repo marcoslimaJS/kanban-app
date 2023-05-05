@@ -6,15 +6,21 @@ import AsideDesktop from './Aside/AsideDesktop';
 import Board from './Board';
 import Header from './Header/Header';
 import { ReactComponent as ShowSVG } from '../assets/icon-show-sidebar.svg';
-import { showSidebar } from '../store/sidebar';
+import { hideSidebar, showSidebar } from '../store/sidebar';
 import { AnimeLeft } from '../styles/animations';
+import useMedia from '../Hooks/useMedia';
 
 function Home({ setTheme }) {
   const dispatch = useDispatch();
   const { sidebar } = useSelector((state) => state);
+  const mobile = useMedia('(max-width: 640px)');
 
   const handleSidebar = () => {
     dispatch(showSidebar());
+  };
+
+  const hiddenSidebar = () => {
+    dispatch(hideSidebar());
   };
 
   const token = localStorage.getItem('token');
@@ -24,13 +30,22 @@ function Home({ setTheme }) {
     <Container>
       <Header />
       <Content>
-        <AsideDesktop setTheme={setTheme} />
-        {!sidebar && (
-          <ShowSidebar onClick={handleSidebar}>
-            <ShowSVG />
-          </ShowSidebar>
+        {!mobile && (
+          <div>
+            <AsideDesktop setTheme={setTheme} />
+            {!sidebar && (
+              <ShowSidebar onClick={handleSidebar}>
+                <ShowSVG />
+              </ShowSidebar>
+            )}
+          </div>
         )}
         <Board />
+        {sidebar && mobile && (
+          <SidebarMobile onClick={hiddenSidebar}>
+            <AsideDesktop />
+          </SidebarMobile>
+        )}
       </Content>
     </Container>
   );
@@ -54,8 +69,11 @@ const Container = styled.section`
 `;
 
 const Content = styled.div`
-  display: flex;
+  // display: flex;
+  display: grid;
+  grid-template-columns: auto 1fr;
   height: 100%;
+  position: relative;
 `;
 
 const ShowSidebar = styled.div`
@@ -67,4 +85,17 @@ const ShowSidebar = styled.div`
   border-radius: 0px 100px 100px 0px;
   cursor: pointer;
   animation: ${AnimeLeft} 0.5s ease-in-out;
+`;
+
+const SidebarMobile = styled.div`
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(0, 0, 0, 0.5);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  overflow-y: auto;
 `;

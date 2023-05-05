@@ -1,21 +1,31 @@
 import React, { useEffect, useRef, useState } from 'react';
 import styled from 'styled-components';
 // import { ReactComponent as LogoLight } from '../../assets/logo-light.svg';
-import { useSelector } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import { ReactComponent as LogoDark } from '../../assets/logo-dark.svg';
+import { ReactComponent as LogoMobile } from '../../assets/logo-mobile.svg';
 import { ReactComponent as ConfigSVG } from '../../assets/icon-vertical-ellipsis.svg';
+import { ReactComponent as ArrowIcon } from '../../assets/icon-chevron-down.svg';
 import Button from '../Interactive/Button';
 import CreateTask from '../Modals/CreateTask';
 import DeleteModal from '../Modals/DeleteModal';
 import CreateBoard from '../Modals/CreateBoard';
+import useMedia from '../../Hooks/useMedia';
+import { hideSidebar, showSidebar } from '../../store/sidebar';
+import AsideDesktop from '../Aside/AsideDesktop';
 
 function Header() {
-  const { board } = useSelector((state) => state.boards);
+  const {
+    boards: { board },
+    sidebar,
+  } = useSelector((state) => state);
   const [ModalCreateTask, setModalCreateTask] = useState(false);
   const [showConfigModal, setShowConfigModal] = useState(false);
   const [showModalEditBoard, setShowModalEditBoard] = useState(false);
   const [showModalDeleteBoard, setShowModalDeleteBoard] = useState(false);
   const configRef = useRef(null);
+  const mobile = useMedia('(max-width: 640px)');
+  const dispatch = useDispatch();
   console.log(board);
   const dataBoard = {
     name: board?.name,
@@ -39,6 +49,10 @@ function Header() {
     setShowModalDeleteBoard(true);
   };
 
+  const handleSidebar = () => {
+    dispatch(showSidebar());
+  };
+
   useEffect(() => {
     const handleOutsideClick = ({ target }) => {
       if (!configRef?.current.contains(target)) {
@@ -55,37 +69,44 @@ function Header() {
 
   return (
     <HeaderElement>
-      <Logo>
-        <LogoDark />
+      <Logo sidebar={sidebar} mobile={mobile}>
+        {!mobile ? <LogoDark /> : <LogoMobile />}
       </Logo>
-      <TitleBoard>{board?.name}</TitleBoard>
-      <ButtonsContainer>
-        <Button fnClick={openModalCreateTask}>+ Add New Task</Button>
-        {ModalCreateTask && <CreateTask closeModal={setModalCreateTask} />}
-        <ConfigContainer ref={configRef}>
-          <ConfigButton onClick={openConfigModal}>
-            <ConfigSVG />
-          </ConfigButton>
-          {showConfigModal && (
-            <ConfigModal>
-              <EditButton onClick={openModalEditBoard}>Edit Board</EditButton>
-              <DeleteButton onClick={openModalDeleteBoard}>
-                Delete Board
-              </DeleteButton>
-            </ConfigModal>
-          )}
-        </ConfigContainer>
-      </ButtonsContainer>
-      {showModalEditBoard && (
-        <CreateBoard boardId={board?.id} closeModal={setShowModalEditBoard} />
-      )}
-      {showModalDeleteBoard && (
-        <DeleteModal
-          id={board?.id}
-          closeModal={setShowModalDeleteBoard}
-          data={dataBoard}
-        />
-      )}
+      <HeaderContent>
+        <TitleBoard onClick={mobile && handleSidebar}>
+          {board?.name}
+          {mobile && <ArrowIcon />}
+        </TitleBoard>
+        <ButtonsContainer>
+          <Button fnClick={openModalCreateTask} mobile={mobile}>
+            + Add New Task
+          </Button>
+          {ModalCreateTask && <CreateTask closeModal={setModalCreateTask} />}
+          <ConfigContainer ref={configRef}>
+            <ConfigButton onClick={openConfigModal}>
+              <ConfigSVG />
+            </ConfigButton>
+            {showConfigModal && (
+              <ConfigModal>
+                <EditButton onClick={openModalEditBoard}>Edit Board</EditButton>
+                <DeleteButton onClick={openModalDeleteBoard}>
+                  Delete Board
+                </DeleteButton>
+              </ConfigModal>
+            )}
+          </ConfigContainer>
+        </ButtonsContainer>
+        {showModalEditBoard && (
+          <CreateBoard boardId={board?.id} closeModal={setShowModalEditBoard} />
+        )}
+        {showModalDeleteBoard && (
+          <DeleteModal
+            id={board?.id}
+            closeModal={setShowModalDeleteBoard}
+            data={dataBoard}
+          />
+        )}
+      </HeaderContent>
     </HeaderElement>
   );
 }
@@ -93,35 +114,60 @@ function Header() {
 export default Header;
 
 const HeaderElement = styled.header`
-  display: flex;
+  display: grid;
+  grid-template-columns: auto 1fr;
   align-items: center;
-  gap: 24px;
-  padding: 12px 24px 12px 24px;
-  box-shadow: 0px 4px 6px rgba(54, 78, 126, 0.101545);
   background: ${({ theme }) => theme.bgPrimary};
   position: relative;
   z-index: 500;
 `;
 
 const Logo = styled.div`
-  //border-right: 1px solid ${({ theme }) => theme.lines};
-  padding-right: 32px;
-  position: relative;
-  width: 257px;
-  &::after {
-    content: '';
-    display: inline-block;
-    width: 1px;
-    height: 96px;
-    background: ${({ theme }) => theme.lines};
-    position: absolute;
-    top: -30px;
-    right: -4px;
+  border-right: 1px solid ${({ theme }) => theme.lines};
+  display: flex;
+  align-items: center;
+  width: 300px;
+  padding: 24px;
+  height: 100%;
+  transition: all 700ms ease 0s;
+  box-shadow: ${({ sidebar }) => (
+    sidebar ? 'none' : '-3px 4px 6px rgba(54, 78, 126, 0.101545)')};
+  @media (max-width: 768px) {
+    width: 260px;
+  }
+  @media (max-width: 640px) {
+    border-right: none;
+    width: 100%;
+    padding: 20px 16px;
+  }
+`;
+
+const HeaderContent = styled.div`
+  display: flex;
+  align-items: center;
+  gap: 24px;
+  padding: 24px;
+  box-shadow: 3px 4px 6px rgba(54, 78, 126, 0.101545);
+  @media (max-width: 640px) {
+    padding: 20px 16px 20px 0px;
   }
 `;
 
 const TitleBoard = styled.h1`
-  font-size: 20px;
+  font-size: 24px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  & svg {
+    position: relative;
+    top: 3px;
+  }
+  @media (max-width: 768px) {
+    font-size: 20px;
+  }
+  @media (max-width: 640px) {
+    cursor: pointer;
+  }
 `;
 
 const ButtonsContainer = styled.div`
@@ -162,4 +208,18 @@ const DeleteButton = styled.button`
   color: ${({ theme }) => theme.delete};
   text-align: start;
   cursor: pointer;
+`;
+
+const SidebarMobile = styled.div`
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(0, 0, 0, 0.5);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  overflow-y: auto;
+  padding: 48px 0px;
 `;

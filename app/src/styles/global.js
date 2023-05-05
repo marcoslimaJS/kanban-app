@@ -20,16 +20,16 @@ const GlobalStyle = createGlobalStyle`
     border: none;
     font-family: 'Plus Jakarta Sans', sans-serif;
     font-weight: 700;
-
     line-height: 15px;
     letter-spacing: 0.75px;
     background: none;
   }
   body {
-    font-size: 16px;
+    font-size: 12px;
     font-family: 'Plus Jakarta Sans', sans-serif;
     background: ${({ theme }) => theme.bgSecundary};
     min-height: 100vh;
+    overflow-y: hidden;
   }
 `;
 

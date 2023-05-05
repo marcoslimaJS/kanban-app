@@ -116,17 +116,17 @@ class TaskController {
 
   async delete(request, response) {
     const { taskId } = request.params;
-    const { columnId } = request.body;
+    // const { columnId } = request.body;
 
     const taskExists = await TasksRepository.findTaskById(taskId);
-    const columnExists = await ColumnsRepository.findColumnById(columnId);
+    // const columnExists = await ColumnsRepository.findColumnById(columnId);
 
     if (!taskExists) {
       return response.status(404).json({ error: 'Task not found' });
     }
-    if (!columnExists) {
+    /* if (!columnExists) {
       return response.status(400).json({ error: 'Column not found' });
-    }
+    } */
 
     await SubtasksRepository.deleteSubtaskByTaskId(taskId);
     await TasksRepository.deleteTask(taskId);

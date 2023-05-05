@@ -17,7 +17,7 @@ export const deleteTask = createAsyncThunk(
   'task/deleteTask',
   async ({ taskId, body }, { rejectWithValue }) => {
     try {
-      const response = await api.delete(`/task/${taskId}`, body);
+      const response = await api.delete(`/task/${taskId}`, { data: body });
       return response.data;
     } catch (error) {
       return rejectWithValue(error.response.data);

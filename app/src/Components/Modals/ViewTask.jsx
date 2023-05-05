@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import styled from 'styled-components';
 import PropTypes from 'prop-types';
 import { useSelector } from 'react-redux';
@@ -12,10 +12,17 @@ import CreateTask from './CreateTask';
 
 function ViewTask({ taskId, closeModal }) {
   const task = useSelector(({ boards }) => getTaskById(boards.board, taskId));
+  const { refresh } = useSelector((state) => state.tasks);
   const { columns } = useSelector(({ boards }) => boards.board);
   const [showConfigModal, setShowConfigModal] = useState(false);
   const [showDeleteModal, setShowDeleteModal] = useState(false);
   const [showEditModal, setShowEditModal] = useState(false);
+  const isFirstRender = useRef(true);
+  const dataTask = {
+    name: task.title,
+    userId: localStorage.getItem('userId'),
+    type: 'task',
+  };
 
   console.log(task);
 
@@ -39,6 +46,14 @@ function ViewTask({ taskId, closeModal }) {
   const handleEditTask = () => {
     setShowEditModal(true);
   };
+
+  useEffect(() => {
+    if (isFirstRender.current) {
+      isFirstRender.current = false;
+      return;
+    }
+    closeViewModal();
+  }, [refresh]);
 
   return (
     <Modal onClose={closeViewModal}>
@@ -85,7 +100,7 @@ function ViewTask({ taskId, closeModal }) {
       </ViewTaskContent>
       ) }
       {showDeleteModal && (
-        <DeleteModal id={showDeleteModal} closeModal={setShowDeleteModal} />
+        <DeleteModal id={taskId} closeModal={setShowDeleteModal} data={dataTask} />
       )}
       {showEditModal && (
       <CreateTask taskId={taskId} closeModal={setShowEditModal} />
