@@ -1,6 +1,7 @@
 import React, { useEffect, useRef, useState } from 'react';
 import styled from 'styled-components';
 // import { ReactComponent as LogoLight } from '../../assets/logo-light.svg';
+import PropTypes from 'prop-types';
 import { useDispatch, useSelector } from 'react-redux';
 import { ReactComponent as LogoDark } from '../../assets/logo-dark.svg';
 import { ReactComponent as LogoMobile } from '../../assets/logo-mobile.svg';
@@ -8,30 +9,19 @@ import { ReactComponent as ConfigSVG } from '../../assets/icon-vertical-ellipsis
 import { ReactComponent as ArrowIcon } from '../../assets/icon-chevron-down.svg';
 import Button from '../Interactive/Button';
 import CreateTask from '../Modals/CreateTask';
-import DeleteModal from '../Modals/DeleteModal';
-import CreateBoard from '../Modals/CreateBoard';
 import useMedia from '../../Hooks/useMedia';
-import { hideSidebar, showSidebar } from '../../store/sidebar';
-import AsideDesktop from '../Aside/AsideDesktop';
+import { showSidebar } from '../../store/sidebar';
 
-function Header() {
+function Header({ openBoardEdit, openBoardDelete }) {
   const {
     boards: { board },
     sidebar,
   } = useSelector((state) => state);
   const [ModalCreateTask, setModalCreateTask] = useState(false);
   const [showConfigModal, setShowConfigModal] = useState(false);
-  const [showModalEditBoard, setShowModalEditBoard] = useState(false);
-  const [showModalDeleteBoard, setShowModalDeleteBoard] = useState(false);
   const configRef = useRef(null);
   const mobile = useMedia('(max-width: 640px)');
   const dispatch = useDispatch();
-  console.log(board);
-  const dataBoard = {
-    name: board?.name,
-    userId: localStorage.getItem('userId'),
-    type: 'board',
-  };
 
   const openModalCreateTask = () => {
     setModalCreateTask(true);
@@ -42,11 +32,11 @@ function Header() {
   };
 
   const openModalEditBoard = () => {
-    setShowModalEditBoard(true);
+    openBoardEdit(true);
   };
 
   const openModalDeleteBoard = () => {
-    setShowModalDeleteBoard(true);
+    openBoardDelete(true);
   };
 
   const handleSidebar = () => {
@@ -96,20 +86,20 @@ function Header() {
             )}
           </ConfigContainer>
         </ButtonsContainer>
-        {showModalEditBoard && (
-          <CreateBoard boardId={board?.id} closeModal={setShowModalEditBoard} />
-        )}
-        {showModalDeleteBoard && (
-          <DeleteModal
-            id={board?.id}
-            closeModal={setShowModalDeleteBoard}
-            data={dataBoard}
-          />
-        )}
       </HeaderContent>
     </HeaderElement>
   );
 }
+
+Header.propTypes = {
+  openBoardEdit: PropTypes.func,
+  openBoardDelete: PropTypes.bool,
+};
+
+Header.defaultProps = {
+  openBoardEdit: () => {},
+  openBoardDelete: () => {},
+};
 
 export default Header;
 
@@ -120,6 +110,7 @@ const HeaderElement = styled.header`
   background: ${({ theme }) => theme.bgPrimary};
   position: relative;
   z-index: 500;
+  box-shadow: 3px 4px 6px rgba(54, 78, 126, 0.101545);
 `;
 
 const Logo = styled.div`
@@ -130,8 +121,6 @@ const Logo = styled.div`
   padding: 24px;
   height: 100%;
   transition: all 700ms ease 0s;
-  box-shadow: ${({ sidebar }) => (
-    sidebar ? 'none' : '-3px 4px 6px rgba(54, 78, 126, 0.101545)')};
   @media (max-width: 768px) {
     width: 260px;
   }
@@ -147,7 +136,6 @@ const HeaderContent = styled.div`
   align-items: center;
   gap: 24px;
   padding: 24px;
-  box-shadow: 3px 4px 6px rgba(54, 78, 126, 0.101545);
   @media (max-width: 640px) {
     padding: 20px 16px 20px 0px;
   }

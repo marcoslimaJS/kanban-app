@@ -114,8 +114,7 @@ const Container = styled.aside`
   width: ${({ sidebar }) => (sidebar ? '300px' : '0')};
   white-space: nowrap;
   position: relative;
-  height: calc(100vh - 91px);
-  z-index: 300;
+  z-index: 600;
   left: ${({ sidebar }) => (sidebar ? '0' : '-300px')};
   border-radius: ${({ mobile }) => (mobile ? '8px;' : 'none')};
   @media (max-width: 768px) {
@@ -148,7 +147,6 @@ const BoardList = styled.ul`
   display: flex;
   flex-direction: column;
   gap: 5px;
-  height: calc(100vh - 320px);
   overflow-y: auto;
 `;
 

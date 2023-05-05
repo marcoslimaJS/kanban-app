@@ -9,11 +9,23 @@ import { ReactComponent as ShowSVG } from '../assets/icon-show-sidebar.svg';
 import { hideSidebar, showSidebar } from '../store/sidebar';
 import { AnimeLeft } from '../styles/animations';
 import useMedia from '../Hooks/useMedia';
+import CreateBoard from './Modals/CreateBoard';
+import DeleteModal from './Modals/DeleteModal';
 
 function Home({ setTheme }) {
   const dispatch = useDispatch();
-  const { sidebar } = useSelector((state) => state);
+  const {
+    sidebar,
+    boards: { board },
+  } = useSelector((state) => state);
   const mobile = useMedia('(max-width: 640px)');
+  const [showModalEditBoard, setShowModalEditBoard] = useState(false);
+  const [showModalDeleteBoard, setShowModalDeleteBoard] = useState(false);
+  const dataBoard = {
+    name: board?.name,
+    userId: localStorage.getItem('userId'),
+    type: 'board',
+  };
 
   const handleSidebar = () => {
     dispatch(showSidebar());
@@ -28,7 +40,10 @@ function Home({ setTheme }) {
 
   return (
     <Container>
-      <Header />
+      <Header
+        openBoardEdit={setShowModalEditBoard}
+        openBoardDelete={setShowModalDeleteBoard}
+      />
       <Content>
         {!mobile && (
           <div>
@@ -45,6 +60,16 @@ function Home({ setTheme }) {
           <SidebarMobile onClick={hiddenSidebar}>
             <AsideDesktop />
           </SidebarMobile>
+        )}
+        {showModalEditBoard && (
+          <CreateBoard boardId={board?.id} closeModal={setShowModalEditBoard} />
+        )}
+        {showModalDeleteBoard && (
+          <DeleteModal
+            id={board?.id}
+            closeModal={setShowModalDeleteBoard}
+            data={dataBoard}
+          />
         )}
       </Content>
     </Container>
