@@ -21,8 +21,8 @@ function CreateTask({ taskId, closeModal }) {
     value: id,
   }));
   const [status, setStatus] = useState(options[options.length - 1]);
-  const title = useForm();
-  const description = useForm();
+  const title = useForm(task?.title);
+  const description = useForm(task?.description);
   const [subtasks, setSubtasks] = useState(task?.subtasks || []);
   console.log(task);
   console.log(subtasks);
@@ -72,6 +72,8 @@ function CreateTask({ taskId, closeModal }) {
     dispatch(updateTask({ taskId, body }));
     closeModalCreateTask();
   };
+
+  console.log(title.value);
 
   return (
     <Modal onClose={closeModalCreateTask}>

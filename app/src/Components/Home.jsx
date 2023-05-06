@@ -61,7 +61,7 @@ function Home({ setTheme }) {
         <Board />
         {sidebar && mobile && (
           <SidebarMobile onClick={hiddenSidebar}>
-            <AsideDesktop />
+            <AsideDesktop setTheme={setTheme} />
           </SidebarMobile>
         )}
         {showModalEditBoard && (
@@ -126,5 +126,4 @@ const SidebarMobile = styled.div`
   display: flex;
   justify-content: center;
   align-items: center;
-  //animation: ${AnimeDown} 0.5s ease-in-out;
 `;

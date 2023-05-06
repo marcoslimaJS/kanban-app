@@ -24,8 +24,6 @@ function ViewTask({ taskId, closeModal }) {
     type: 'task',
   };
 
-  console.log(task);
-
   const options = columns.map(({ id, name }) => ({ label: name, value: id }));
   const [status, setStatus] = useState(options[options.length - 1]);
 
@@ -157,13 +155,13 @@ const ConfigModal = styled.div`
   width: 192px;
 `;
 
-const EditButton = styled.button`
+const EditButton = styled.div`
   color: ${({ theme }) => theme.textSecundary};
   text-align: start;
   cursor: pointer;
 `;
 
-const DeleteButton = styled.button`
+const DeleteButton = styled.div`
   color: ${({ theme }) => theme.delete};
   text-align: start;
   cursor: pointer;

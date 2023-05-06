@@ -42,7 +42,8 @@ function Board() {
   const adjustTaskInColumn = () => {
     const x = position?.x;
     // console.log(dropTask);
-    const taskCurrent = taskElement.current.find(({ id }) => id === dropTask);
+    console.log(taskElement.current);
+    const taskCurrent = taskElement?.current.find(({ id }) => id === dropTask);
     console.log(`${x}: Posição da Task`);
     console.log(columnsPosition);
     if (x < columnsPosition[0].x) {
@@ -77,7 +78,9 @@ function Board() {
   useEffect(() => {
     console.log('useffect siderbar');
     const columns = columnsElement?.current;
-    if (columns) {
+    console.log(columns);
+    console.log(columnsElement.current);
+    if (columns.length) {
       console.log('ifffffffff');
       const positions = columns.map((column) => {
         const { right } = column.getBoundingClientRect();
@@ -85,8 +88,9 @@ function Board() {
       });
       setColumnsPosition(positions);
     }
-  }, [sidebar]);
+  }, [sidebar, board?.columns]);
   console.log(columnsPosition);
+  console.log(columnsElement.current);
 
   return (
     <Container sidebar={sidebar} mobile={mobile}>
@@ -148,7 +152,9 @@ export default Board;
 const Container = styled.main`
   position: relative;
   padding: 24px;
-  display: flex;
+  display: grid;
+  grid-template-columns: repeat(auto-fit, 280px);
+  grid-auto-flow: column;
   gap: 24px;
   overflow: auto;
   height: calc(100vh - 90px);
@@ -169,7 +175,7 @@ const Column = styled.div`
   display: flex;
   flex-direction: column;
   gap: 20px;
-  min-width: 240px;
+  min-width: 280px;
   border: 1px solid red;
 `;
 
@@ -180,6 +186,7 @@ const ColumnTitle = styled.h3`
   display: flex;
   align-items: center;
   gap: 10px;
+  //position: fixed;
   &::before {
     content: '';
     display: inline-block;
@@ -200,7 +207,7 @@ const Task = styled.div`
   font-weight: 700;
   cursor: move;
   position: ${({ drop, id }) => (drop === id ? 'absolute' : 'initial')};
-  width: 236px;
+  width: 280px;
   left: ${({ position }) => position && position.x}px;
   top: ${({ position }) => position && position.y}px;
   user-select: none;

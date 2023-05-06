@@ -13,9 +13,9 @@ import { hideSidebar } from '../../store/sidebar';
 import { boardData } from '../../store/board/boardsActions';
 import CreateBoard from '../Modals/CreateBoard';
 import useMedia from '../../Hooks/useMedia';
-import { AnimeDown, AnimeDownBig } from '../../styles/animations';
+import { AnimeDownBig } from '../../styles/animations';
 
-function AsideDesktop({ setTheme, sidebarModal }) {
+function AsideDesktop({ setTheme }) {
   const dispatch = useDispatch();
   const { sidebar, boards, tasks } = useSelector((state) => state);
   const [showModalCreateBoard, setShowModalCreateBoard] = useState(false);

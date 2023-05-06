@@ -16,7 +16,6 @@ const getDescriptions = (type, name) => {
 
 function DeleteModal({ id, closeModal, data }) {
   const dispatch = useDispatch();
-  console.log(data);
   const closeDeleteModal = () => {
     closeModal(false);
   };

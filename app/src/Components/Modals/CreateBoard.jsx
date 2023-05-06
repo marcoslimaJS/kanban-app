@@ -12,7 +12,7 @@ import { createBoard, updateBoard } from '../../store/board/boardsActions';
 function CreateBoard({ boardId, closeModal }) {
   const board = boardId && useSelector(({ boards }) => boards.board);
   const dispatch = useDispatch();
-  const name = useForm();
+  const name = useForm(board?.name);
   const [columns, setColumns] = useState(board?.columns || []);
   const closeModalCreateBoard = () => {
     closeModal(false);
