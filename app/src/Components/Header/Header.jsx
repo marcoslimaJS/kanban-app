@@ -111,6 +111,7 @@ const HeaderElement = styled.header`
   position: relative;
   z-index: 500;
   box-shadow: 3px 4px 6px rgba(54, 78, 126, 0.101545);
+  max-height: 90px;
 `;
 
 const Logo = styled.div`

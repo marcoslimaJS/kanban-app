@@ -151,18 +151,25 @@ const Container = styled.main`
   display: flex;
   gap: 24px;
   overflow: auto;
+  height: calc(100vh - 90px);
   transition: 700ms all;
   width: ${({ sidebar, mobile }) => (
     sidebar && !mobile ? 'calc(100vw - 300px)' : '100vw')};
   margin-left: ${({ sidebar, mobile }) => (
     sidebar && !mobile ? '300px' : '0px')};
+  @media (max-width: 768px) {
+    width: ${({ sidebar, mobile }) => (
+    sidebar && !mobile ? 'calc(100vw - 260px)' : '100vw')};
+    margin-left: ${({ sidebar, mobile }) => (
+    sidebar && !mobile ? '260px' : '0px')};
+  }
 `;
 
 const Column = styled.div`
   display: flex;
   flex-direction: column;
   gap: 20px;
-  width: 240px;
+  min-width: 240px;
   border: 1px solid red;
 `;
 

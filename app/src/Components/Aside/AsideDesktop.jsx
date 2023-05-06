@@ -116,7 +116,7 @@ const Container = styled.aside`
   width: ${({ sidebar }) => (sidebar ? '300px' : '0')};
   white-space: nowrap;
   position: fixed;
-  height: calc(100% - 91px);
+  height: calc(100% - 90px);
   z-index: 600;
   left: ${({ sidebar }) => (sidebar ? '0' : '-300px')};
   border-radius: ${({ mobile }) => (mobile ? '8px;' : 'none')};
@@ -152,6 +152,7 @@ const BoardList = styled.ul`
   overflow-y: auto;
   overflow-x: hidden;
   margin-bottom: 10px;
+  padding-right: 10px;
 `;
 
 const BoardItem = styled.li`
