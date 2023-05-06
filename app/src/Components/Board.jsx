@@ -2,10 +2,12 @@ import React, { useEffect, useRef, useState } from 'react';
 import { useSelector } from 'react-redux';
 import styled from 'styled-components';
 import ViewTask from './Modals/ViewTask';
+import useMedia from '../Hooks/useMedia';
 
 function Board() {
   const { board } = useSelector((state) => state.boards);
   const { sidebar } = useSelector((state) => state);
+  const mobile = useMedia('(max-width: 640px)');
   const [columnsPosition, setColumnsPosition] = useState([]);
   const taskElement = useRef([]);
   const columnsElement = useRef([]);
@@ -23,7 +25,7 @@ function Board() {
     console.log(event);
     let e = event;
     if (e.type === 'touchmove') {
-      e = event.touches[0]
+      e = event.touches[0];
     }
     // console.log(dropTask);
     if (isDragging) {
@@ -87,7 +89,7 @@ function Board() {
   console.log(columnsPosition);
 
   return (
-    <Container>
+    <Container sidebar={sidebar} mobile={mobile}>
       {board?.columns.map(({ name, id: columnId, tasks }, index) => (
         <Column
           key={columnId}
@@ -106,10 +108,14 @@ function Board() {
               }}
               key={taskId}
               onMouseDown={handleMouseDown}
-              onMouseMove={isDragging ? ((e) => handleMouseMove(e, taskId)) : undefined}
+              onMouseMove={
+                isDragging ? (e) => handleMouseMove(e, taskId) : undefined
+              }
               onMouseUp={handleMouseUp}
               onTouchStart={handleMouseDown}
-              onTouchMove={isDragging ? ((e) => handleMouseMove(e, taskId)) : undefined}
+              onTouchMove={
+                isDragging ? (e) => handleMouseMove(e, taskId) : undefined
+              }
               onTouchEnd={handleMouseUp}
               onClick={() => handleViewTaskModal(taskId)}
               position={position}
@@ -140,12 +146,16 @@ function Board() {
 export default Board;
 
 const Container = styled.main`
+  position: relative;
   padding: 24px;
   display: flex;
-  width: 100%;
   gap: 24px;
-  position: relative;
   overflow: auto;
+  transition: 700ms all;
+  width: ${({ sidebar, mobile }) => (
+    sidebar && !mobile ? 'calc(100vw - 300px)' : '100vw')};
+  margin-left: ${({ sidebar, mobile }) => (
+    sidebar && !mobile ? '300px' : '0px')};
 `;
 
 const Column = styled.div`

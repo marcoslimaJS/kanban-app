@@ -7,10 +7,11 @@ import Board from './Board';
 import Header from './Header/Header';
 import { ReactComponent as ShowSVG } from '../assets/icon-show-sidebar.svg';
 import { hideSidebar, showSidebar } from '../store/sidebar';
-import { AnimeLeft } from '../styles/animations';
+import { AnimeDown, AnimeLeft } from '../styles/animations';
 import useMedia from '../Hooks/useMedia';
 import CreateBoard from './Modals/CreateBoard';
 import DeleteModal from './Modals/DeleteModal';
+import CreateTask from './Modals/CreateTask';
 
 function Home({ setTheme }) {
   const dispatch = useDispatch();
@@ -21,6 +22,7 @@ function Home({ setTheme }) {
   const mobile = useMedia('(max-width: 640px)');
   const [showModalEditBoard, setShowModalEditBoard] = useState(false);
   const [showModalDeleteBoard, setShowModalDeleteBoard] = useState(false);
+  const [showModalCreateTask, setShowModalCreateTask] = useState(false);
   const dataBoard = {
     name: board?.name,
     userId: localStorage.getItem('userId'),
@@ -43,17 +45,18 @@ function Home({ setTheme }) {
       <Header
         openBoardEdit={setShowModalEditBoard}
         openBoardDelete={setShowModalDeleteBoard}
+        openCreateTask={setShowModalCreateTask}
       />
       <Content>
         {!mobile && (
-          <div>
+          <>
             <AsideDesktop setTheme={setTheme} />
             {!sidebar && (
               <ShowSidebar onClick={handleSidebar}>
                 <ShowSVG />
               </ShowSidebar>
             )}
-          </div>
+          </>
         )}
         <Board />
         {sidebar && mobile && (
@@ -71,6 +74,7 @@ function Home({ setTheme }) {
             data={dataBoard}
           />
         )}
+        {showModalCreateTask && <CreateTask closeModal={setShowModalCreateTask} />}
       </Content>
     </Container>
   );
@@ -113,8 +117,8 @@ const ShowSidebar = styled.div`
 `;
 
 const SidebarMobile = styled.div`
-  position: absolute;
-  top: 0;
+  position: fixed;
+  top: 80px;
   left: 0;
   right: 0;
   bottom: 0;
@@ -122,5 +126,5 @@ const SidebarMobile = styled.div`
   display: flex;
   justify-content: center;
   align-items: center;
-  overflow-y: auto;
+  //animation: ${AnimeDown} 0.5s ease-in-out;
 `;

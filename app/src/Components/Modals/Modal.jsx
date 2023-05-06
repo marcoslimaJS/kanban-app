@@ -1,6 +1,7 @@
 import React from 'react';
 import styled from 'styled-components';
 import PropTypes from 'prop-types';
+import { AnimeScale } from '../../styles/animations';
 
 function Modal({ onClose, children }) {
   return (
@@ -35,7 +36,7 @@ const ModalOverlay = styled.div`
   align-items: center;
   z-index: 9000;
   overflow-y: auto;
-  padding: 48px 0px;
+  padding: 48px 16px;
 `;
 
 const ModalWrapper = styled.div`
@@ -45,4 +46,5 @@ const ModalWrapper = styled.div`
   max-width: 480px;
   width: 100%;
   font-size: 13px;
+  animation: ${AnimeScale} 0.5s ease-in-out;
 `;

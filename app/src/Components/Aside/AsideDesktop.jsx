@@ -13,6 +13,7 @@ import { hideSidebar } from '../../store/sidebar';
 import { boardData } from '../../store/board/boardsActions';
 import CreateBoard from '../Modals/CreateBoard';
 import useMedia from '../../Hooks/useMedia';
+import { AnimeDown, AnimeDownBig } from '../../styles/animations';
 
 function AsideDesktop({ setTheme, sidebarModal }) {
   const dispatch = useDispatch();
@@ -50,38 +51,40 @@ function AsideDesktop({ setTheme, sidebarModal }) {
   }, [tasks.refresh, boards.refresh]);
 
   return (
-    <Container sidebar={sidebar} mobile={mobile} onClick={(e) => e.stopPropagation()}>
-      <BoardsContent>
-        <AllBoards>All Boards ({boards.listBoards.length})</AllBoards>
-        <BoardList>
-          {boards.listBoards.map(({ name, id }) => (
-            <BoardItem
-              key={id}
-              current={boards.board?.id === id}
-              onClick={() => handleBoardData(id)}
-            >
-              <BoardSVG />
-              {name}
-            </BoardItem>
-          ))}
-        </BoardList>
-        <ButtonCreateBoard onClick={createBoard}>
-          <BoardSVG />+ Create New Board
-        </ButtonCreateBoard>
-      </BoardsContent>
-      <div>
-        <ThemeMode>
-          <LightSVG />
-          <SwitchButton setTheme={setTheme} />
-          <DarkSVG />
-        </ThemeMode>
-        {!mobile && (
-          <HideSidebar onClick={handleSidebar}>
-            <HideSVG />
-            <span>Hide Sidebar</span>
-          </HideSidebar>
-        )}
-      </div>
+    <Container
+      sidebar={sidebar}
+      mobile={mobile}
+      onClick={(e) => e.stopPropagation()}
+    >
+      <AllBoards>All Boards ({boards.listBoards.length})</AllBoards>
+      <BoardList>
+        {boards.listBoards.map(({ name, id }) => (
+          <BoardItem
+            key={id}
+            current={boards.board?.id === id}
+            onClick={() => handleBoardData(id)}
+          >
+            <BoardSVG />
+            {name}
+          </BoardItem>
+        ))}
+      </BoardList>
+      <ButtonCreateBoard onClick={createBoard}>
+        <BoardSVG />+ Create New Board
+      </ButtonCreateBoard>
+
+      <ThemeMode>
+        <LightSVG />
+        <SwitchButton setTheme={setTheme} />
+        <DarkSVG />
+      </ThemeMode>
+      {!mobile && (
+        <HideSidebar onClick={handleSidebar}>
+          <HideSVG />
+          <span>Hide Sidebar</span>
+        </HideSidebar>
+      )}
+
       {showModalCreateBoard && (
         <CreateBoard closeModal={setShowModalCreateBoard} />
       )}
@@ -105,7 +108,6 @@ const Container = styled.aside`
   background: ${({ theme }) => theme.bgPrimary};
   padding-bottom: 32px;
   padding-right: ${({ sidebar }) => (sidebar ? '24px' : '0px')};
-  height: 100%;
   border-right: 1px solid ${({ theme }) => theme.lines};
   display: flex;
   flex-direction: column;
@@ -113,7 +115,8 @@ const Container = styled.aside`
   transition: 700ms all;
   width: ${({ sidebar }) => (sidebar ? '300px' : '0')};
   white-space: nowrap;
-  position: relative;
+  position: fixed;
+  height: calc(100% - 91px);
   z-index: 600;
   left: ${({ sidebar }) => (sidebar ? '0' : '-300px')};
   border-radius: ${({ mobile }) => (mobile ? '8px;' : 'none')};
@@ -124,11 +127,9 @@ const Container = styled.aside`
   }
   @media (max-width: 640px) {
     padding-bottom: 16px;
+    position: relative;
+    animation: ${AnimeDownBig} 0.5s ease-in-out;
   }
-`;
-
-const BoardsContent = styled.div`
-
 `;
 
 const AllBoards = styled.p`
@@ -147,7 +148,10 @@ const BoardList = styled.ul`
   display: flex;
   flex-direction: column;
   gap: 5px;
+  height: 100%;
   overflow-y: auto;
+  overflow-x: hidden;
+  margin-bottom: 10px;
 `;
 
 const BoardItem = styled.li`
@@ -179,6 +183,7 @@ const ButtonCreateBoard = styled.button`
   font-size: 15px;
   line-height: 19px;
   font-weight: 700;
+  margin-bottom: 20px;
   cursor: pointer;
   path {
     fill: ${({ theme }) => theme.colorPrimary};

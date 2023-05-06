@@ -24,7 +24,7 @@ export const AnimeLeft = keyframes`
 
 export const AnimeScale = keyframes`
   from {
-    transform: scale(0.4);
+    transform: scale(0.6);
   }
   to {
     transform: scale(1);

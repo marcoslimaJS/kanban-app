@@ -12,19 +12,18 @@ import CreateTask from '../Modals/CreateTask';
 import useMedia from '../../Hooks/useMedia';
 import { showSidebar } from '../../store/sidebar';
 
-function Header({ openBoardEdit, openBoardDelete }) {
+function Header({ openBoardEdit, openBoardDelete, openCreateTask }) {
   const {
     boards: { board },
     sidebar,
   } = useSelector((state) => state);
-  const [ModalCreateTask, setModalCreateTask] = useState(false);
   const [showConfigModal, setShowConfigModal] = useState(false);
   const configRef = useRef(null);
   const mobile = useMedia('(max-width: 640px)');
   const dispatch = useDispatch();
 
   const openModalCreateTask = () => {
-    setModalCreateTask(true);
+    openCreateTask(true);
   };
 
   const openConfigModal = () => {
@@ -63,7 +62,7 @@ function Header({ openBoardEdit, openBoardDelete }) {
         {!mobile ? <LogoDark /> : <LogoMobile />}
       </Logo>
       <HeaderContent>
-        <TitleBoard onClick={mobile && handleSidebar}>
+        <TitleBoard onClick={mobile ? handleSidebar : undefined}>
           {board?.name}
           {mobile && <ArrowIcon />}
         </TitleBoard>
@@ -71,7 +70,6 @@ function Header({ openBoardEdit, openBoardDelete }) {
           <Button fnClick={openModalCreateTask} mobile={mobile}>
             + Add New Task
           </Button>
-          {ModalCreateTask && <CreateTask closeModal={setModalCreateTask} />}
           <ConfigContainer ref={configRef}>
             <ConfigButton onClick={openConfigModal}>
               <ConfigSVG />
@@ -93,12 +91,14 @@ function Header({ openBoardEdit, openBoardDelete }) {
 
 Header.propTypes = {
   openBoardEdit: PropTypes.func,
-  openBoardDelete: PropTypes.bool,
+  openBoardDelete: PropTypes.func,
+  openCreateTask: PropTypes.func,
 };
 
 Header.defaultProps = {
   openBoardEdit: () => {},
   openBoardDelete: () => {},
+  openCreateTask: () => {},
 };
 
 export default Header;
@@ -196,18 +196,4 @@ const DeleteButton = styled.button`
   color: ${({ theme }) => theme.delete};
   text-align: start;
   cursor: pointer;
-`;
-
-const SidebarMobile = styled.div`
-  position: absolute;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  background-color: rgba(0, 0, 0, 0.5);
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  overflow-y: auto;
-  padding: 48px 0px;
 `;
