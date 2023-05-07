@@ -8,10 +8,11 @@ function Board() {
   const { board } = useSelector((state) => state.boards);
   const { sidebar } = useSelector((state) => state);
   const mobile = useMedia('(max-width: 640px)');
-  const [columnsPosition, setColumnsPosition] = useState([]);
   const taskElement = useRef([]);
   const columnsElement = useRef([]);
+  const [allTasks, setAllTasks] = useState([]);
   const [isDragging, setIsDragging] = useState(false);
+  const [wasMoved, setWasMoved] = useState(false);
   const [position, setPosition] = useState(null);
   const [modalViewTask, setModalViewTask] = useState(null);
   const [dropTask, setDropTask] = useState('');
@@ -21,31 +22,30 @@ function Board() {
   };
 
   const handleMouseMove = (event, taskId) => {
-    console.log('teste');
-    console.log(event);
+    setWasMoved(true);
     let e = event;
     if (e.type === 'touchmove') {
       e = event.touches[0];
     }
-    // console.log(dropTask);
     if (isDragging) {
       setDropTask(taskId);
       if (sidebar) {
-        setPosition({ x: e.clientX - 400, y: e.clientY - 115 });
+        setPosition({ x: e.clientX - 440, y: e.clientY - 135 });
       } else {
-        setPosition({ x: e.clientX - 100, y: e.clientY - 115 });
+        setPosition({ x: e.clientX - 140, y: e.clientY - 135 });
       }
     }
   };
-  console.log(position);
 
   const adjustTaskInColumn = () => {
-    const x = position?.x;
-    // console.log(dropTask);
-    console.log(taskElement.current);
-    const taskCurrent = taskElement?.current.find(({ id }) => id === dropTask);
+    const x = sidebar ? position.x + 300 : position.x;
+    const columnsPosition = columnsElement.current.map((column) => {
+      const { right } = column.getBoundingClientRect();
+      return { x: right };
+    });
+    const taskCurrent = allTasks.find(({ id }) => id === dropTask);
     console.log(`${x}: Posição da Task`);
-    console.log(columnsPosition);
+    console.log(`${columnsPosition[0].x}: Posição da Coluna 1`);
     if (x < columnsPosition[0].x) {
       console.log('primeira coluna');
       columnsElement.current[0].appendChild(taskCurrent);
@@ -60,14 +60,26 @@ function Board() {
 
   const handleMouseUp = () => {
     setIsDragging(false);
-    console.log(position);
     adjustTaskInColumn();
     setDropTask('');
+    setPosition(null);
     console.log('MouseUp no pulo');
   };
 
   const handleViewTaskModal = (taskId) => {
-    setModalViewTask(taskId);
+    if (wasMoved) {
+      setWasMoved(false);
+    } else {
+      setModalViewTask(taskId);
+    }
+  };
+
+  const getAllTasksOfBoard = () => {
+    const tasks = columnsElement.current.reduce((accum, column) => {
+      const onlyTask = [...column.children].filter(({ id }) => id);
+      return [...accum, ...onlyTask];
+    }, []);
+    setAllTasks(tasks);
   };
 
   useEffect(() => {
@@ -76,21 +88,12 @@ function Board() {
   });
 
   useEffect(() => {
-    console.log('useffect siderbar');
     const columns = columnsElement?.current;
-    console.log(columns);
-    console.log(columnsElement.current);
     if (columns.length) {
       console.log('ifffffffff');
-      const positions = columns.map((column) => {
-        const { right } = column.getBoundingClientRect();
-        return { x: right };
-      });
-      setColumnsPosition(positions);
+      getAllTasksOfBoard();
     }
   }, [sidebar, board?.columns]);
-  console.log(columnsPosition);
-  console.log(columnsElement.current);
 
   return (
     <Container sidebar={sidebar} mobile={mobile}>
