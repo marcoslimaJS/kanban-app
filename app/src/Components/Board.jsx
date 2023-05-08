@@ -8,8 +8,9 @@ function Board() {
   const { board } = useSelector((state) => state.boards);
   const { sidebar } = useSelector((state) => state);
   const mobile = useMedia('(max-width: 640px)');
-  const taskElement = useRef([]);
+  const BoardElement = useRef(null);
   const columnsElement = useRef([]);
+  const taskElement = useRef([]);
   const [allTasks, setAllTasks] = useState([]);
   const [isDragging, setIsDragging] = useState(false);
   const [wasMoved, setWasMoved] = useState(false);
@@ -23,16 +24,33 @@ function Board() {
 
   const handleMouseMove = (event, taskId) => {
     setWasMoved(true);
-    let e = event;
-    if (e.type === 'touchmove') {
-      e = event.touches[0];
-    }
+    const e = event.type === 'touchmove' ? event.touches[0] : event;
     if (isDragging) {
       setDropTask(taskId);
+      const screenWidth = window.innerWidth;
+      const scrollThreshold = 100; // threshold para acionar o scroll
+
+      if (e.clientX < scrollThreshold + 340) {
+        // scroll para esquerda
+        BoardElement.current.scrollBy({
+          left: -100,
+          behavior: 'smooth',
+        });
+      } else if (e.clientX > screenWidth - scrollThreshold) {
+        // scroll para direita
+        BoardElement.current.scrollBy({
+          left: 100,
+          behavior: 'smooth',
+        });
+      }
+      const rect = BoardElement.current.getBoundingClientRect();
+      console.log(rect);
+      console.log(BoardElement.current.scrollLeft);
+      const scroll = BoardElement.current.scrollLeft;
       if (sidebar) {
-        setPosition({ x: e.clientX - 440, y: e.clientY - 135 });
+        setPosition({ x: e.clientX - 440 + scroll, y: e.clientY - 135 });
       } else {
-        setPosition({ x: e.clientX - 140, y: e.clientY - 135 });
+        setPosition({ x: e.clientX - 140 + scroll, y: e.clientY - 135 });
       }
     }
   };
@@ -60,14 +78,17 @@ function Board() {
 
   const handleMouseUp = () => {
     setIsDragging(false);
-    adjustTaskInColumn();
+    if (position) {
+      adjustTaskInColumn();
+    }
     setDropTask('');
     setPosition(null);
     console.log('MouseUp no pulo');
   };
 
   const handleViewTaskModal = (taskId) => {
-    if (wasMoved) {
+    console.log('CLIQUEEEEEEEEEEEEEEEE');
+    if (false /* wasMoved */) {
       setWasMoved(false);
     } else {
       setModalViewTask(taskId);
@@ -96,7 +117,7 @@ function Board() {
   }, [sidebar, board?.columns]);
 
   return (
-    <Container sidebar={sidebar} mobile={mobile}>
+    <Container sidebar={sidebar} mobile={mobile} ref={BoardElement}>
       {board?.columns.map(({ name, id: columnId, tasks }, index) => (
         <Column
           key={columnId}
